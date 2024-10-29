@@ -7,9 +7,6 @@ local lua_cpath = ""
 -- Max file size
 local body_size = "15m"
 
--- Max comment size
-local text_size = 10000
-
 local postgres = {
   host = "127.0.0.1",
   user = "postgres",
@@ -28,7 +25,6 @@ config("development", {
   num_workers = "1",
 
   body_size   = body_size,
-  text_size   = text_size,
   lua_path    = lua_path,
   lua_cpath   = lua_cpath,
 
@@ -44,7 +40,6 @@ config("production", {
   num_workers = "4",
 
   body_size   = body_size,
-  text_size   = text_size,
   lua_path    = lua_path,
   lua_cpath   = lua_cpath,
 

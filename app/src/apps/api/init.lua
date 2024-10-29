@@ -1,6 +1,6 @@
 local lapis = require("lapis")
 local app = lapis.Application()
 
-app:match("index", "/", require("apps.web.index"))
+app:match("login", "/login", require("apps.api.login"))
 
 return app

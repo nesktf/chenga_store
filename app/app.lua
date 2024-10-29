@@ -1,11 +1,12 @@
 local lapis = require("lapis")
-local app = lapis.Application()
 
-app.include = function(self, a)
+local app = lapis.Application()
+function app:include(a)
   self.__class.include(self, a, nil, self)
 end
 
 app:enable("etlua")
+app.layout = require("views.layout")
 
 do
   function app.handle_404()

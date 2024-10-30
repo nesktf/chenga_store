@@ -1,6 +1,7 @@
-local lapis = require("lapis")
-local app = lapis.Application()
+local lapis = require("common").lapis
 
-app:match("login", "/login", require("apps.api.login"))
+local app = lapis.make_app{}
+
+app:include("apps.api.core")
 
 return app

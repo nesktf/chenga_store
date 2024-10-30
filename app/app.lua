@@ -1,20 +1,24 @@
-local lapis = require("lapis")
+local lapis = require("common").lapis
+local ngx = ngx
 
-local app = lapis.Application()
-function app:include(a)
-  self.__class.include(self, a, nil, self)
-end
+local app = lapis.make_app{}
 
 app:enable("etlua")
 app.layout = require("views.layout")
 
 do
-  function app.handle_404()
+	function app.handle_404()
+		local api = ngx.var.uri:match("^(/api).+$")
+
+		if (not api) then
+			return { render="code_404" }
+    end
+
     return {
       status = 404,
-      json = { "Not found!" }
+      json   = { "Resource not found!" }
     }
-  end
+	end
 end
 
 app:include("apps.api")

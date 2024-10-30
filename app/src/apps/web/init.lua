@@ -1,20 +1,13 @@
-local lapis = require("lapis")
-local config = require("lapis.config").get()
+local lapis = require("common").lapis
+local locale = require("locale")
 
-local app = lapis.Application()
-app.__base = app
-function app:include(a)
-  self.__class.include(self, a, nil, self)
-end
-
-local strings = require("strings")
-
+local app = lapis.make_app{}
 
 app:before_filter(function(self)
-  self.site_name = config.site_name
+  self.site_name = lapis.config.site_name
 
   function self:getstr(name)
-    return strings[name]
+    return locale.getstr(name)
   end
 
   self.static_url = "/static/%s"
@@ -27,5 +20,6 @@ end)
 
 app:include("apps.web.admin")
 app:include("apps.web.pages")
+app:include("apps.web.user")
 
 return app

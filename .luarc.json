@@ -1,0 +1,9 @@
+{
+  "diagnostics.globals": [
+    "ngx"
+  ],
+  "diagnostics.disable": [
+    "lowercase-global",
+    "trailing-space"
+  ]
+}

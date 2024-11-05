@@ -1,0 +1,36 @@
+<div id="admin_products">
+  <h2> Product list </h2>
+  <div id="products">
+    <% if (prod_index > 0) then %>
+    <form hx-post="<%= url_for('ajax.admin.products') %>"
+      hx-target="#admin_products">
+      <input name="frag" type="hidden" value="products">
+      <input name="index" type="hidden" value="<%= prod_index-1 %>">
+      <button type="submit">prev</button>
+    </form>
+    <% end %>
+
+    <% if (prod_index < prod_max_index) then %>
+    <form hx-post="<%= url_for('ajax.admin.products') %>"
+      hx-target="#admin_products">
+      <input name="frag" type="hidden" value="products">
+      <input name="index" type="hidden" value="<%= prod_index+1 %>">
+      <button type="submit">next</button>
+    </form>
+    <% end %>
+
+    <form hx-post="<%= url_for('ajax.admin.products') %>"
+      hx-target="#modal_content">
+      <input name="frag" type="hidden" value="newprod">
+      <button type="submit">new</button>
+    </form>
+    <ul>
+      <% for _, prod in ipairs(prods) do %>
+      <li><%= prod.name %></li>
+      <% end %>
+    </ul>
+  </div>
+<div id="modal_content">
+</div>
+</div>
+

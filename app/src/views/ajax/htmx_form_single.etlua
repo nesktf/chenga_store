@@ -1,0 +1,5 @@
+<form hx-post="<%= url %>"
+  hx-target="<%= target %>">
+  <input name="<%= name or 'frag' %>" type="hidden" value="<%= value or 0 %>">
+  <button type="submit"><%= text %></button>
+</form>

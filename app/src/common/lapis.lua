@@ -1,20 +1,25 @@
 local lapis = require("lapis")
+local error = require("common.error")
 local ngx = ngx
 
-local base_action = (function()
-  local action = {}
-  function action.error()
+local _base_action = (function()
+  local function _req_error()
     return {
       status = ngx.HTTP_NOT_ALLOWED,
-      json = {},
+      json = {
+        info = "Not allowed"
+      },
     }
   end
 
+  local action = {}
+
   action.__index = action
-  action.GET = action.error
-  action.POST = action.error
-  action.PUT = action.error
-  action.DELETE = action.error
+  action.GET = _req_error
+  action.POST = _req_error
+  action.PUT = _req_error
+  action.DELETE = _req_error
+  action.on_error = error.on_error
 
   return action
 end)()
@@ -25,7 +30,7 @@ _M.config = require("lapis.config").get()
 _M.respond_to = require("lapis.application").respond_to
 
 function _M.make_action()
-  return setmetatable({}, base_action)
+  return setmetatable({}, _base_action)
 end
 
 function _M.make_app(params)
@@ -39,6 +44,20 @@ function _M.make_app(params)
   end
 
   return app
+end
+
+function _M.capture_action(action)
+  return error.capture{
+    on_error = action.on_error,
+    _M.respond_to(action)
+  }
+end
+
+function _M.capture_action_json(action)
+  return error.capture_json{
+    on_error = action.on_error,
+    _M.respond_to(action)
+  }
 end
 
 return _M

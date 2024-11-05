@@ -15,12 +15,13 @@ local Products = Model:extend("products", {
 Products.valid_record = types.params_shape {
   { "name", types.valid_text },
   { "price", types.number },
-  -- { "date_appended", exists = true },
+  -- { "date_appended", types.date },
   { "stock", types.number },
   { "provider_id", types.db_id },
 }
 
 function Products:new(params)
+  params.date_appended = params.date_appended or db.format_date()
   local prod, err = self:create(params)
   if (not prod) then
     return throw("err_create_prod", err, params.name, params.provider_id)
@@ -76,6 +77,10 @@ end
 
 function Products:get_all()
   return self:select("order by name asc")
+end
+
+function Products:validate(params)
+  return true
 end
 
 return Products

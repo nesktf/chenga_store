@@ -3,7 +3,6 @@ local lapis_util = require("lapis.application")
 local _M = {}
 
 _M.assert = lapis_util.assert_error
-_M.yield = lapis_util.yield_error
 _M.capture = lapis_util.capture_errors
 _M.capture_json = lapis_util.capture_errors_json
 
@@ -63,17 +62,23 @@ _M.errcode = (function()
   return err
 end)()
 
+local function print_table(table)
+  for k, v in ipairs(table) do
+    if (type(v) == "table") then
+      print_table(v)
+    end
+    print(k, ": ", v)
+  end
+end
+
 function _M:on_error()
   for _, err in ipairs(self.errors) do
     if (type(err) == "table") then
-      for k, v in pairs(err) do
-        print(k, ": ", v)
-      end
+      print_table(err)
     else
       print(err)
     end
   end
-
   print(#self.errors)
 
   return self:write {
@@ -83,7 +88,17 @@ function _M:on_error()
 end
 
 function _M.throw(msg, ...)
-  return false, { msg, { ... }}
+  return false, {
+    msg = msg,
+    info = { ... }
+  }
+end
+
+function _M.yield(msg, ...)
+  lapis_util.yield_error({
+    msg = msg,
+    info = {...}
+  })
 end
 
 return _M

@@ -1,0 +1,12 @@
+<div id="newprod">
+  <form hx-post="<%= url_for('ajax.admin.products') %>"
+    hx-target="#newprod_status">
+    <input name="prod_name" type="text">
+    <input name="prod_stock" type="text">
+    <input name="prod_provider" type="text">
+    <input name="frag" type="hidden" value="submit_prod">
+    <button type="submit">send</button>
+  </form>
+  <div id="newprod_status">
+  </div>
+</div>

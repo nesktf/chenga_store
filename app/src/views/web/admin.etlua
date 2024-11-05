@@ -1,0 +1,18 @@
+<h1>dashboard</h1>
+<a href="<%= url_for('web.pages.index') %>">home</a>
+<div id="buttons">
+  <h2>Funny buttons!!!</h2>
+  <ul>
+    <li>
+    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.users'), target="#content", text="Manage users" }) %>
+    </li>
+    <li>
+    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.products'), value="products" ,target="#content", text="Manage Products" }) %>
+    </li>
+    <li>
+    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.stats'), target="#content", text="View statistics" }) %>
+    </li>
+  </ul>
+</div>
+<div id="content">
+</div>

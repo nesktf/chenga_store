@@ -17,35 +17,35 @@ Categories.valid_record = types.params_shape{
 function Categories:new(params)
   local cat, err = self:create(params)
   if (not cat) then
-    return throw("err_delete_category", err, params.name)
+    return throw("err_create_category", err, params.name)
   end
   return cat
 end
 
-function Categories:get(name)
-  local cat = self:find{ name = name }
+function Categories:get(id)
+  local cat = self:find{ id = id }
   if (not cat) then
-    return throw("err_get_category", "Name not found", name)
+    return throw("err_get_category", "Not found", id)
   end
   return cat
 end
 
-function Categories:modify(name, params)
-  local cat, gerr = self:get(name)
+function Categories:modify(id, params)
+  local cat, gerr = self:get(id)
   if (not cat) then
     return gerr
   end
 
   local succ, err = cat:update(params)
   if (not succ) then
-    return throw("err_modify_category", err, name)
+    return throw("err_modify_category", err, id)
   end
 
   return cat
 end
 
-function Categories:delete(name)
-  local cat, gerr = self:get(name)
+function Categories:delete(id)
+  local cat, gerr = self:get(id)
   if (not cat) then
     return gerr
   end
@@ -62,7 +62,7 @@ function Categories:delete(name)
 
   local succ = cat:delete()
   if (not succ) then
-    return throw("err_delete_category", "Failed to delete category", name)
+    return throw("err_delete_category", "Failed to delete category", id)
   end
 
   return cat

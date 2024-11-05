@@ -66,4 +66,9 @@ function Providers:get_all()
   return self:select("order by name asc")
 end
 
+function Providers:validate(params)
+  -- TODO: validate lol
+  return true
+end
+
 return Providers

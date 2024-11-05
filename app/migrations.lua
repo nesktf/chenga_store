@@ -45,7 +45,7 @@ local function init_tables()
     { "id", types.serial{ unique = true, primary_key = true } },
     { "name", types.text },
     { "price", types.integer },
-    { "date_appended", types.time },
+    { "date_appended", types.date },
     { "stock", types.integer },
 
     { "provider_id", types.foreign_key },
@@ -65,7 +65,7 @@ local function init_tables()
 
   schema.create_table("sales", {
     { "id", types.serial{ unique = true, primary_key = true } },
-    { "date", types.time },
+    { "date", types.date },
     { "total", types.integer },
 
     { "user_id", types.foreign_key { null = true } },
@@ -87,8 +87,10 @@ local function init_tables()
 
   schema.create_table("discounts", {
     { "id", types.serial{ unique = true, primary_key = true } },
-    { "date_init", types.time },
-    { "date_end", types.time },
+    { "date_init", types.date },
+    { "time_init", types.time},
+    { "date_end", types.date },
+    { "time_end", types.time },
     { "value", types.integer },
 
     { "category_id", types.foreign_key },

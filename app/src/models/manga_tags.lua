@@ -11,8 +11,8 @@ local MangaTags = Model:extend("manga_tags", {
 })
 
 MangaTags.validate = error.make_validator {
-  { "manga_id", types.db_id },
-  { "tag_id", types.db_id },
+  manga_id = types.db_id,
+  tag_id = types.db_id,
 }
 
 function MangaTags:new(params)

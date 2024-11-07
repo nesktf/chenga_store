@@ -1,0 +1,41 @@
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
+      <li>users</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Name</p>
+      <th scope="col">E-Mail</p>
+      <th scope="col">Username</p>
+      <th scope="col"></p>
+    </tr>
+  </thead>
+  <tbody>
+    <% for _, user in ipairs(users) do %>
+    <tr>
+      <th scope="row"><%= user.name %></th>
+      <td><%= user.email %></td>
+      <td><%= user.username %></td>
+      <td>
+          <form action="<%= url_for('web.admin.user_detail') %>"
+            method="post">
+              <input name="id" type="hidden" value="<%= user.id %>">
+            <div role="group">
+              <button name="edit" type="submit">Edit</button>
+              <button type="button">Delete</button>
+            </div>
+          </form>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</article>

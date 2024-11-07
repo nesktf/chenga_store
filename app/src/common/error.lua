@@ -105,10 +105,10 @@ function _M.make_validator(record)
   return function(_, params)
     local valid, err = validate(params)
     if (not valid) then
-      return _M.code.field_invalid(err)
+      return _M.code.field_invalid("Validation failed: %s", err)
     end
 
-    return true
+    return params
   end
 end
 

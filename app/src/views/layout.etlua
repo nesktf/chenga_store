@@ -13,14 +13,14 @@
   <header>
   <nav>
     <ul>
-      <li><strong><a href="<%= url_for('web.index') %>">ecommerce!!1!!</a></strong></li>
+      <li><strong><%= site_name %></strong></li>
     </ul>
     <ul>
       <li>
       <form role="search" action="<%= url_for('web.search') %>" method="get">
-        <input name="search"
+        <input name="q"
           type="search"
-          value="<%= params.search or '' %>"
+          value="<%= params.q or '' %>"
           placeholder="Search"/>
         <input type="submit" value="Search" />
       </form>
@@ -30,9 +30,9 @@
       <li>
         <% if (session.user) then %>
         <details class="dropdown">
-        <summary>Account</summary>
+        <summary><%= session.user.username %></summary>
         <ul dir="rtl">
-          <% if (session.is_admin) then %>
+          <% if (session.user.is_admin) then %>
           <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
           <% end %>
           <li><a href="<%= url_for('web.user.cart') %>">cart</a></li>

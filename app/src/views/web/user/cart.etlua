@@ -1,1 +1,12 @@
-<h1>cart</h1>
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>cart</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+  <h1>cart</h1>
+</article>

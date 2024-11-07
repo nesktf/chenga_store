@@ -14,12 +14,24 @@ local Users = Model:extend("users", {
 })
 
 Users.validate = error.make_validator {
-  { "name", types.valid_text },
-  { "address", types.valid_text },
-  { "email", types.valid_text }, -- TODO: Check email properly
-  { "username", types.valid_text },
-  { "password", types.valid_text },
-  { "is_admin", types.boolean },
+  name = types.valid_text,
+  address = types.valid_text,
+  email = types.custom(function(val)
+    if (not val) then
+      return nil, "can't be null"
+    end
+
+    if (type(val) ~= "string") then
+      return nil, "not a string"
+    end
+
+    -- TODO: Add email regex here...
+
+    return true
+  end),
+  username = types.valid_text,
+  password = types.limited_text(32, 8),
+  is_admin = types.boolean,
 }
 
 
@@ -95,14 +107,18 @@ function Users:is_admin(username)
 end
 
 function Users:login(params)
+  if (not params.username or not params.password) then
+    return errcode.field_invalid("Invalid parameters")
+  end
+
   local user = self:get(params.username)
   if (not user) then
-    return errcode.field_invalid("Invalid user %s", params.username)
+    return errcode.invalid_authorization("Invalid user %s", params.username)
   end
 
   local prehash = user.username:lower()..params.password..secret
   if (not bcrypt.verify(prehash, user.password)) then
-    return errcode.field_invalid("Invalid password")
+    return errcode.password_not_match("Invalid password")
   end
 
   return user

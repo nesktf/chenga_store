@@ -6,8 +6,8 @@ local errcode = error.code
 local Vouchers = Model:extend("vouchers")
 
 Vouchers.validate = error.make_validator {
-  { "code", types.valid_text },
-  { "discount", types.number },
+  code = types.valid_text,
+  discount = types.number,
 }
 
 

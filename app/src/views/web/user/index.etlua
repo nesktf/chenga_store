@@ -1,1 +1,12 @@
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>user</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
 <h1>User</h1>
+</article>

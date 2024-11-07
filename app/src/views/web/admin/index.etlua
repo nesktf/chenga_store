@@ -1,24 +1,38 @@
 <article>
-<h1>dashboard</h1>
-<form action="<% url_for('web.admin.index') %>" method="post">
-<button type="submit" name="logout">logout</button>
-</form>
-<div id="admin_buttons">
-  <h2>Funny buttons!!!</h2>
-  <ul>
-    <li>
-    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.users'), target="#content", text="Manage users" }) %>
-    </li>
-    <li>
-    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.products'), value="products" ,target="#content", text="Manage Products" }) %>
-    </li>
-    <li>
-    <% render('views.ajax.htmx_form_single', { url=url_for('ajax.admin.stats'), target="#content", text="View statistics" }) %>
-    </li>
-  </ul>
-</div>
-<div id="content">
-</div>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>dashboard</li>
+    </ul>
+  </nav>
+</article>
+
+<article id="content">
+  <section>
+    <h2> Users </h2>
+    <p> User count: <%= stats.user_count %> </p>
+    <p> Admin count: <%= stats.admin_count %> </p>
+  </section>
+
+  <section>
+    <h2> Products </h2>
+    <p> Product count: <%= stats.prod_count %> </p>
+    <p> Tag count: <%= stats.tag_count %> </p>
+  </section>
+
+  <section>
+    <h2> Sales </h2>
+    <p> Sales count: <%= stats.sales_count %> </p>
+    <p> Sales total: $<%= stats.sales_total %> </p>
+  </section>
+</article>
+
+<article>
+  <h2>Manage things</h2>
+  <div role="group">
+    <a href="<%= url_for('web.admin.users') %>" role="button">Users</a>
+    <a href="<%= url_for('web.admin.manga') %>" role="button">Products</a>
+  </div>
 </article>
 
 <script src="/static/js/modal_toggle.js"></script>

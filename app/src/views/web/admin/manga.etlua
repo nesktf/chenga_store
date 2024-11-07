@@ -1,0 +1,13 @@
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
+      <li>products</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+<h1> manga </h1>
+</article>

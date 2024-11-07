@@ -1,4 +1,19 @@
 <article>
-<h1>search</h1>
-<p> search results for "<%= params.search %>" </p>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>search</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+  <h3>search results for "<%= params.q %>"</h3>
+  <% if (not mangas) then %>
+    <p> Nothing found lol </p>
+  <% else %>
+    <% for _, manga in ipairs(mangas) do %>
+      <p><%= manga.name %></p>
+    <% end %>
+  <% end %>
 </article>

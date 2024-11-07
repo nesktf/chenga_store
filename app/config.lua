@@ -30,7 +30,7 @@ config("development", {
   lua_cpath   = lua_cpath,
 
   postgres    = postgres,
-  secret = secret,
+  secret      = secret,
 })
 
 config("production", {
@@ -46,5 +46,5 @@ config("production", {
   lua_cpath   = lua_cpath,
 
   postgres    = postgres,
-  secret = secret,
+  secret      = secret,
 })

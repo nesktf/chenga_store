@@ -2,16 +2,24 @@ local lapis = require("common").lapis
 local error = require("common").error
 local action = lapis.make_action()
 
-local function verify_admin(params)
-  if (not params.username or not params.password) then
-    return false, "Invalid parameters"
-  end
+local Users = require("models.users")
+local Mangas = require("models.mangas")
+local Sales = require("models.sales")
+local Tags = require("models.tags")
 
-  if (params.username == "test" and params.password == "test") then
-    return "admin"
-  end
+function retrieve_stats(self)
+  local stats = {}
 
-  return false, "Invalid parameters"
+  stats.user_count = Users:count()
+  stats.admin_count = Users:count("is_admin")
+
+  stats.prod_count = Mangas:count()
+  stats.tag_count = Tags:count()
+
+  stats.sales_count = Sales:count()
+  stats.sales_total = Sales:get_total()
+
+  return stats
 end
 
 function action:before()
@@ -19,27 +27,13 @@ function action:before()
 end
 
 function action:GET()
-  error.assert(self.session.name, "Invalid session")
+  if (not self.session.user) then
+    return { redirect_to = self:url_for('web.user.login') }
+  end
+
+  self.stats = retrieve_stats(self)
+
   return { render = "web.admin.index" }
-end
-
-function action:POST()
-  if (self.params.logout) then
-    self.session.name = nil
-    return { redirect_to = self:url_for("web.admin.index") }
-  end
-  error.assert(self.params.login ~= nil or self.session.name ~= nil, "Invalid POST")
-
-  if (self.params.login) then
-    local username = error.assert(verify_admin(self.params))
-    self.session.name = username
-  end
-
-  return { redirect_to = self:url_for("web.admin.index") }
-end
-
-function action:on_error()
-  return { render = "web.admin.login" }
 end
 
 return action

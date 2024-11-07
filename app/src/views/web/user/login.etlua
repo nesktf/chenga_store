@@ -1,14 +1,36 @@
 <article>
-<h1>you have to login!!!11!</h1>
-<form action="<%= url_for('web.admin.index') %>" method="post">
-  <input name="csrf_token" type="hidden" value="2" />
-  <input type="text" name="username" value="<%= params.username or '' %>" />
-  <input type="password" name="password" />
-  <button type="submit" name="login">Login!!!</button>
-</form>
-<% if (errors) then %>
-<% for _, err in ipairs(errors) do %>
-<p> ERROR: <%= err %> </p>
-<% end %>
-<% end %>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>login</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+  <h1>you have to login!!!11!</h1>
+  <form action="<%= url_for('web.user.login') %>" method="post">
+    <input name="csrf_token" type="hidden" value="2" />
+    <input type="text" name="username" value="<%= params.username or '' %>" placeholder="Username" />
+    <input type="password" name="password" placeholder="Password" />
+    <button type="submit" name="login">Login!!!</button>
+  </form>
+  <% if (errors) then %>
+  <% for _, err in ipairs(errors) do %>
+  <p> ERROR: <%= err.msg %> </p>
+  <% end %>
+  <% end %>
+</article>
+
+<article>
+  <h1>or you can register too!!!</h1>
+  <form action="<%= url_for('web.user.login') %>" method="post">
+    <input name="csrf_token" type="hidden" value="2" />
+    <input type="text" name="name" value="" placeholder="Name" />
+    <input type="text" name="address" value="" placeholder="Address" />
+    <input type="text" name="email" value="" placeholder="Email" />
+    <input type="text" name="username" value="" placeholder="Username" />
+    <input type="password" name="password" value="" placeholder="Password" />
+    <button type="submit" name="register">Register!!!</button>
+  </form>
 </article>

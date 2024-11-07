@@ -10,7 +10,7 @@ local Sales = Model:extend("sales", {
 })
 
 Sales.validate = error.make_validator {
-  { "sale_time", types.custom(function(val)
+  sale_time = types.custom(function(val)
     if (val == nil) then
       return nil, "Sale time can't be null"
     end
@@ -18,9 +18,9 @@ Sales.validate = error.make_validator {
     -- TODO: validate time
 
     return true
-  end)},
-  { "total", types.number },
-  { "user_id", types.db_id:is_optional() },
+  end),
+  total = types.number,
+  user_id = types.db_id:is_optional(),
 }
 
 
@@ -71,7 +71,15 @@ function Sales:delete(id)
 end
 
 function Sales:get_all()
-  return self:select("order by date desc")
+  return self:select("order by sale_time desc")
+end
+
+function Sales:get_total()
+  local sum = 0
+  for _, sale in ipairs(self:get_all()) do
+    sum = sum + sale.total
+  end
+  return sum
 end
 
 return Sales

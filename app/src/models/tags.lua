@@ -10,7 +10,7 @@ local Tags = Model:extend("tags", {
 })
 
 Tags.validate = error.make_validator {
-  { "name", types.valid_text },
+  name = types.valid_text,
 }
 
 

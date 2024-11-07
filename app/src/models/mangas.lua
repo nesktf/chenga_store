@@ -11,9 +11,9 @@ local Mangas = Model:extend("mangas", {
 })
 
 Mangas.validate = error.make_validator {
-  { "name", types.valid_text },
-  { "author", types.valid_text },
-  { "isbn", types.custom(function(val)
+  name = types.valid_text,
+  authot = types.valid_text,
+  isbn = types.custom(function(val)
     if (val == nil) then
       return true -- Is an optional parameter
     end
@@ -34,10 +34,10 @@ Mangas.validate = error.make_validator {
     -- Add more checks here...
 
     return true
-  end) },
-  { "stock", types.integer },
-  { "price", types.number },
-  { "image_path", types.string:is_optional() },
+  end),
+  stock = types.integer,
+  price = types.number,
+  image_path = types.string:is_optional(),
 }
 
 

@@ -1,14 +1,7 @@
-<h1>ecommerce test!!</h1>
-<div id="links">
-  <h2>Links!</h2>
-  <ul>
-    <li><a href="<%= url_for('web.admin.index') %>">dashboard!!</a></li>
-    <li><a href="<%= url_for('web.pages.search') %>">search for garbage!</a></li>
-    <li><a href="<%= url_for('web.user.index') %>">manage your user!</a></li>
-    <li><a href="<%= url_for('web.user.cart') %>">see your cart!</a></li>
-  </ul>
-</div>
-<div id="content">
+<article>
   <h2>Content!</h2>
   <p> The index garbage goes here!!!</p>
-</div>
+<footer>
+<p> this is a footer!!! </p>
+</footer>
+</article>

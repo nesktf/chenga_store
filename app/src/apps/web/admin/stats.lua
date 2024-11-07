@@ -1,8 +1,8 @@
 local lapis = require("common").lapis
 local action = lapis.make_action()
 
-function action:POST()
-  return lapis.ajax_render("ajax.admin.users")
+function action:GET()
+  return { render = "web.admin.stats" }
 end
 
 return action

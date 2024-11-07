@@ -18,16 +18,17 @@ local function render_prods(self)
 
     return prods
   end)()
-  return { render = "ajax.admin.products" }
+  return lapis.ajax_render("ajax.admin.products")
 end
 
 local function render_submit_form(_)
-  return { render = "ajax.admin.newprod" }
+  return lapis.ajax_render("ajax.admin.newprod")
 end
 
 local function submit_prod(self)
-  return string.format("tings: %s %s %s", 
-    self.params.prod_name, self.params.prod_stock, self.params.prod_provider)
+  return self:write(string.format("tings: %s %s %s", 
+    self.params.prod_name, self.params.prod_stock, self.params.prod_provider),
+    {layout = false})
 end
 
 function action:POST()
@@ -50,7 +51,7 @@ function action:POST()
 end
 
 function action:on_error()
-  return { render = "ajax.error" }
+  return lapis.ajax_render("ajax.error")
 end
 
 return action

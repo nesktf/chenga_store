@@ -1,26 +1,39 @@
 local db = require("lapis.db")
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local throw = require("common").error.throw
+local error = require("common").error
+local errcode = error.code
+local bcrypt = require("bcrypt")
+local secret = require("common").lapis.config.secret
 
 local Users = Model:extend("users", {
   relations = {
+    { "cart_items", has_many = "CartItems" },
     { "sales", has_many = "Sales" }
   }
 })
 
-Users.valid_record = types.params_shape{
+Users.validate = error.make_validator {
   { "name", types.valid_text },
   { "address", types.valid_text },
-  { "email", types.valid_text }, -- TODO: Check email
+  { "email", types.valid_text }, -- TODO: Check email properly
   { "username", types.valid_text },
   { "password", types.valid_text },
+  { "is_admin", types.boolean },
 }
 
+
 function Users:new(params)
+  if (not params.username or not params.password) then
+    return errcode.db_create("Failed to create user, invalid login parameters")
+  end
+
+  local prehash = params.username:lower()..params.password..secret
+  params.password = bcrypt.digest(prehash, 12)
+
   local user, err = self:create(params)
   if (not user) then
-    return throw("err_create_user", err, params.username)
+    return errcode.db_create("Failed to create user '%s': %s", params.username, err)
   end
 
   return user
@@ -29,7 +42,7 @@ end
 function Users:get(username)
   local user = self:find{ username = username }
   if (not user) then
-    return throw("err_get_user", "Username not found", username)
+    return errcode.db_select("Username '%s' not found", username)
   end
 
   return user
@@ -38,12 +51,12 @@ end
 function Users:modify(username, params)
   local user, gerr = self:get(username)
   if (not user) then
-    return gerr
+    return errcode.db_update(gerr)
   end
 
   local success, err = user:update(params)
   if (not success) then
-    return throw("err_modify_user", err, username)
+    return errcode.db_update("Error updating user '%s': %s", username, err)
   end
 
   return user
@@ -52,7 +65,11 @@ end
 function Users:delete(username)
   local user, gerr = self:get(username)
   if (not user) then
-    return gerr
+    return errcode.db_delete(gerr)
+  end
+
+  for _, item in ipairs(user:get_cart_items()) do
+    item:delete()
   end
 
   for _, sale in ipairs(user:get_sales()) do
@@ -63,13 +80,32 @@ function Users:delete(username)
 
   local success = user:delete()
   if (not success) then
-    return throw("err_delete_user", "Failed to delete user", username)
+    return errcode.db_delete("Error deleting user '%s'", username)
   end
   return user
 end
 
 function Users:get_all()
   return self:select("order by username asc")
+end
+
+function Users:is_admin(username)
+  local user = self:get(username)
+  return user and user.is_admin or false
+end
+
+function Users:login(params)
+  local user = self:get(params.username)
+  if (not user) then
+    return errcode.field_invalid("Invalid user %s", params.username)
+  end
+
+  local prehash = user.username:lower()..params.password..secret
+  if (not bcrypt.verify(prehash, user.password)) then
+    return errcode.field_invalid("Invalid password")
+  end
+
+  return user
 end
 
 return Users

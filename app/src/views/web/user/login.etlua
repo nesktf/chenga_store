@@ -1,0 +1,14 @@
+<article>
+<h1>you have to login!!!11!</h1>
+<form action="<%= url_for('web.admin.index') %>" method="post">
+  <input name="csrf_token" type="hidden" value="2" />
+  <input type="text" name="username" value="<%= params.username or '' %>" />
+  <input type="password" name="password" />
+  <button type="submit" name="login">Login!!!</button>
+</form>
+<% if (errors) then %>
+<% for _, err in ipairs(errors) do %>
+<p> ERROR: <%= err %> </p>
+<% end %>
+<% end %>
+</article>

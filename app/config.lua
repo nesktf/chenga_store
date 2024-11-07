@@ -1,3 +1,4 @@
+local secret = assert(loadfile("../data/secret.lua"))()
 local config = require("lapis.config")
 
 -- Lua libraries
@@ -29,6 +30,7 @@ config("development", {
   lua_cpath   = lua_cpath,
 
   postgres    = postgres,
+  secret = secret,
 })
 
 config("production", {
@@ -44,4 +46,5 @@ config("production", {
   lua_cpath   = lua_cpath,
 
   postgres    = postgres,
+  secret = secret,
 })

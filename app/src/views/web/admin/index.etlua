@@ -1,6 +1,9 @@
+<article>
 <h1>dashboard</h1>
-<a href="<%= url_for('web.pages.index') %>">home</a>
-<div id="buttons">
+<form action="<% url_for('web.admin.index') %>" method="post">
+<button type="submit" name="logout">logout</button>
+</form>
+<div id="admin_buttons">
   <h2>Funny buttons!!!</h2>
   <ul>
     <li>
@@ -16,3 +19,6 @@
 </div>
 <div id="content">
 </div>
+</article>
+
+<script src="/static/js/modal_toggle.js"></script>

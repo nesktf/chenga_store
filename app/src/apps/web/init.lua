@@ -1,6 +1,5 @@
 local lapis = require("common").lapis
 local locale = require("locale")
-
 local app = lapis.make_app{}
 
 app:before_filter(function(self)
@@ -18,8 +17,19 @@ app:before_filter(function(self)
   end
 end)
 
+app:include((function()
+  local pages = lapis.make_app {
+    name = "web."
+  }
+
+  pages:match("index", "/", lapis.capture_action(require("apps.web.index")))
+  pages:match("manga", "/manga", lapis.capture_action(require("apps.web.manga")))
+  pages:match("search", "/search", lapis.capture_action(require("apps.web.search")))
+
+  return pages
+end)())
+
 app:include("apps.web.admin")
-app:include("apps.web.pages")
 app:include("apps.web.user")
 
 return app

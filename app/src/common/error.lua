@@ -1,4 +1,5 @@
 local lapis_util = require("lapis.application")
+local validate_types = require("lapis.validate.types")
 
 local _M = {}
 
@@ -6,61 +7,6 @@ _M.assert = lapis_util.assert_error
 _M.capture = lapis_util.capture_errors
 _M.capture_json = lapis_util.capture_errors_json
 
-_M.errcode = (function()
-  local err = {}
-
-  -- email:api_key format in Authorization HTTP header is invalid
-  function err.malformed_authorization()
-    return { code=100 }
-  end
-
-  -- email:api_key in Authorization HTTP header does not match any user
-  -- login credentials do not match any user
-  function err.invalid_authorization()
-    return { code=101 }
-  end
-
-  -- Attempting to access endpoint that requires higher priviliges
-  function err.unauthorized_access()
-    return { code=102 }
-  end
-
-  -- Data Validation
-  function err.field_not_found(field)
-    return { code=200, field=field }
-  end
-  function err.field_invalid(field)
-    return { code=201, field=field }
-  end
-  function err.field_not_unique(field)
-    return { code=202, field=field }
-  end
-  function err.token_expired(field)
-    return { code=203, field=field }
-  end
-  function err.password_not_match()
-    return { code=204 }
-  end
-
-  -- Database I/O
-  function err.database_unresponsive()
-    return { code=300 }
-  end
-  function err.database_create()
-    return { code=301 }
-  end
-  function err.database_modify()
-    return { code=302 }
-  end
-  function err.database_delete()
-    return { code=303 }
-  end
-  function err.database_select()
-    return { code=304 }
-  end
-
-  return err
-end)()
 
 local function print_table(table)
   for k, v in ipairs(table) do
@@ -87,18 +33,83 @@ function _M:on_error()
   }
 end
 
-function _M.throw(msg, ...)
-  return false, {
-    msg = msg,
-    info = { ... }
+function _M.throw(code, msg, ...)
+  return nil, {
+    code = code,
+    msg = string.format(msg, ...)
   }
 end
 
-function _M.yield(msg, ...)
+function _M.yield(code, msg, ...)
   lapis_util.yield_error({
-    msg = msg,
-    info = {...}
-  })
+    code = code,
+    msg = string.format(msg, ...)}
+  )
+end
+
+_M.code = (function()
+  local err = {}
+
+  -- Auth
+  function err.malformed_authorization(msg, ...)
+    return _M.throw(100, msg, ...)
+  end
+
+  function err.invalid_authorization(msg, ...)
+    return _M.throw(101, msg, ...)
+  end
+
+  function err.unauthorized_access(msg, ...)
+    return _M.throw(102, msg, ...)
+  end
+
+  -- Data Validation
+  function err.field_not_found(msg, ...)
+    return _M.throw(200, msg, ...)
+  end
+  function err.field_invalid(msg, ...)
+    return _M.throw(201, msg, ...)
+  end
+  function err.field_not_unique(msg, ...)
+    return _M.throw(202, msg, ...)
+  end
+  function err.token_expired(msg, ...)
+    return _M.throw(203, msg, ...)
+  end
+  function err.password_not_match(msg, ...)
+    return _M.throw(204, msg, ...)
+  end
+
+  -- Database I/O
+  function err.db_unresponsive(msg, ...)
+    return _M.throw(300, msg, ...)
+  end
+  function err.db_create(msg, ...)
+    return _M.throw(301, msg, ...)
+  end
+  function err.db_update(msg, ...)
+    return _M.throw(302, msg, ...)
+  end
+  function err.db_delete(msg, ...)
+    return _M.throw(303, msg, ...)
+  end
+  function err.db_select(msg, ...)
+    return _M.throw(304, msg, ...)
+  end
+
+  return err
+end)()
+
+function _M.make_validator(record)
+  local validate = validate_types.shape(record)
+  return function(_, params)
+    local valid, err = validate(params)
+    if (not valid) then
+      return _M.code.field_invalid(err)
+    end
+
+    return true
+  end
 end
 
 return _M

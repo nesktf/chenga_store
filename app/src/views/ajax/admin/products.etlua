@@ -20,7 +20,9 @@
     <% end %>
 
     <form hx-post="<%= url_for('ajax.admin.products') %>"
-      hx-target="#modal_content">
+      hx-target="#modal_content"
+      hx-swap="innerHtml"
+      hx-on::after-request="toggle_modal('modal_root')">
       <input name="frag" type="hidden" value="newprod">
       <button type="submit">new</button>
     </form>
@@ -30,7 +32,7 @@
       <% end %>
     </ul>
   </div>
-<div id="modal_content">
 </div>
-</div>
-
+<dialog id="modal_root">
+<article id="modal_content"></article>
+</dialog>

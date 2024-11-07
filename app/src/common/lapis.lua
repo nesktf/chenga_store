@@ -60,4 +60,8 @@ function _M.capture_action_json(action)
   }
 end
 
+function _M.ajax_render(view)
+  return { render = view, layout = false }
+end
+
 return _M

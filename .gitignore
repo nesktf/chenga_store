@@ -1,3 +1,4 @@
 app/logs/
 app/nginx.conf.compiled
 app/*_temp/
+data/secret.lua

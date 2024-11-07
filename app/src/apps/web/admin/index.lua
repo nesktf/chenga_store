@@ -7,7 +7,7 @@ local Mangas = require("models.mangas")
 local Sales = require("models.sales")
 local Tags = require("models.tags")
 
-function retrieve_stats(self)
+local function retrieve_stats(self)
   local stats = {}
 
   stats.user_count = Users:count()

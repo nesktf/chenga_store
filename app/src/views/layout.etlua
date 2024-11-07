@@ -5,47 +5,46 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><%= page_title %></title>
   <link rel="stylesheet" href="/static/css/pico.min.css"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
   <link rel="icon" type="image/png" href="/static/favicon.png"/>
   <script src="/static/js/htmx.min.js"></script>
 </head>
 
 <body>
   <header>
-  <nav>
-    <ul>
-      <li><strong><%= site_name %></strong></li>
-    </ul>
-    <ul>
-      <li>
-      <form role="search" action="<%= url_for('web.search') %>" method="get">
-        <input name="q"
-          type="search"
-          value="<%= params.q or '' %>"
-          placeholder="Search"/>
-        <input type="submit" value="Search" />
-      </form>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <% if (session.user) then %>
-        <details class="dropdown">
-        <summary><%= session.user.username %></summary>
-        <ul dir="rtl">
-          <% if (session.user.is_admin) then %>
-          <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
+    <nav>
+      <img src="/static/logo_light.png" class="logo" alt="logo"> 
+      <ul>
+        <li>
+        <form role="search" action="<%= url_for('web.search') %>" method="get">
+          <input name="q"
+            type="search"
+            value="<%= params.q or '' %>"
+            placeholder="Search"/>
+          <input type="submit" value="Search" />
+        </form>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <% if (session.user) then %>
+          <details class="dropdown">
+          <summary><%= session.user.username %></summary>
+          <ul dir="rtl">
+            <% if (session.user.is_admin) then %>
+            <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
+            <% end %>
+            <li><a href="<%= url_for('web.user.cart') %>">cart</a></li>
+            <li><a href="<%= url_for('web.user.index') %>">settings</a></li>
+            <li><a href="<%= url_for('web.user.login', nil, { logout = true }) %>">logout</a></li>
+          </ul>
+          </details>
+          <% else %>
+          <a href="<%= url_for('web.user.login') %>">login</a>
           <% end %>
-          <li><a href="<%= url_for('web.user.cart') %>">cart</a></li>
-          <li><a href="<%= url_for('web.user.index') %>">settings</a></li>
-          <li><a href="<%= url_for('web.user.login', nil, { logout = true }) %>">logout</a></li>
-        </ul>
-        </details>
-        <% else %>
-        <a href="<%= url_for('web.user.login') %>">login</a>
-        <% end %>
-      </li>
-    </ul>
-  </nav>
+        </li>
+      </ul>
+    </nav>
   </header>
 
 

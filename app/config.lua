@@ -15,7 +15,7 @@ local postgres = {
   database = "ecommerce",
 }
 
-local site_name = "ecommerce"
+local site_name = "CHENGA"
 
 config("development", {
   site_name   = "[DEV] "..site_name,

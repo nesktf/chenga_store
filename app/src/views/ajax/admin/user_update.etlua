@@ -1,0 +1,40 @@
+<form hx-post="<%= url_for('ajax.admin.users') %>"
+    hx-target="#update_status"
+    hx-swap="innerHtml">
+  <article>
+    <header>
+      <h3>Modify user</h3>
+    </header>
+
+    <label>
+      Name
+      <input name="name" placeholder="Name" value="<%= user.name %>"/>
+    </label>
+    <label>
+      Address
+      <input name="address" placeholder="Address" value="<%= user.address %>"/>
+    </label>
+    <label>
+      E-Mail
+      <input name="email" placeholder="E-Mail" value="<%= user.email %>"/>
+    </label>
+    <label>
+      Username
+      <input name="username" placeholder="Username" value="<%= user.username %>"/>
+    </label>
+    <label>
+      <input name="is_admin" type="checkbox" role="switch" <%= user.is_admin and "checked" or "" %>/>
+      Is Admin
+    </label>
+
+    <div id="update_status">
+    </div>
+
+    <footer>
+      <fieldset class="grid">
+        <button type="button" class="secondary" onClick="kill_thing();">Cancel</button>
+        <button name="req" type="submit" value="update">Send</button>
+      </fieldset>
+    </footer>
+  </article>
+</form>

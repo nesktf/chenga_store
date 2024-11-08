@@ -1,3 +1,12 @@
 <div class="ajax_err">
+  <% if (error_title) then %>
+  <h2><%= error_title %></h2>
+  <% else %>
   <h2>Invalid ajax request</h2>
+  <% end %>
+
+  <% for _, err in ipairs(errors) do %>
+  <p><%= err.msg %></p>
+  <p>Code: <%= err.code %></p>
+  <% end %>
 </div>

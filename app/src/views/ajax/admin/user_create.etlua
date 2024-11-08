@@ -1,0 +1,40 @@
+<form hx-post="<%= url_for('ajax.admin.users') %>"
+    hx-target="#create_status"
+    hx-swap="innerHtml">
+  <article>
+    <header>
+      <h3>Create user</h3>
+    </header>
+
+    <label>
+      Name
+      <input name="name" placeholder="Name" />
+    </label>
+    <label>
+      Address
+      <input name="address" placeholder="Address" />
+    </label>
+    <label>
+      E-Mail
+      <input name="email" placeholder="E-Mail" />
+    </label>
+    <label>
+      Username
+      <input name="username" placeholder="Username" />
+    </label>
+    <label>
+      <input name="is_admin" type="checkbox" role="switch" />
+      Is Admin
+    </label>
+
+    <div id="create_status">
+    </div>
+
+    <footer>
+      <fieldset class="grid">
+        <button type="button" class="secondary" onClick="kill_thing();">Cancel</button>
+        <button name="req" type="submit" value="create">Send</button>
+      </fieldset>
+    </footer>
+  </article>
+</form>

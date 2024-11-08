@@ -60,6 +60,15 @@ function Users:get(username)
   return user
 end
 
+function Users:get_by_id(id)
+  local user = self:find{ id = id }
+  if (not user) then
+    return errcode.db_select("Username with id %d not found", id)
+  end
+
+  return user
+end
+
 function Users:modify(username, params)
   local user, gerr = self:get(username)
   if (not user) then

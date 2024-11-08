@@ -40,11 +40,8 @@ function _M.throw(code, msg, ...)
   }
 end
 
-function _M.yield(code, msg, ...)
-  lapis_util.yield_error({
-    code = code,
-    msg = string.format(msg, ...)}
-  )
+function _M.yield(ex, msg, ...)
+  lapis_util.yield_error(ex(msg, ...))
 end
 
 _M.code = (function()

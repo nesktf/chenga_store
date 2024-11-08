@@ -8,34 +8,66 @@
   </nav>
 </article>
 
+
 <article>
-<table>
-  <thead>
-    <tr>
-      <th scope="col">Name</p>
-      <th scope="col">E-Mail</p>
-      <th scope="col">Username</p>
-      <th scope="col"></p>
-    </tr>
-  </thead>
-  <tbody>
-    <% for _, user in ipairs(users) do %>
-    <tr>
-      <th scope="row"><%= user.name %></th>
-      <td><%= user.email %></td>
-      <td><%= user.username %></td>
-      <td>
-          <form action="<%= url_for('web.admin.user_detail') %>"
-            method="post">
-              <input name="id" type="hidden" value="<%= user.id %>">
+  <header>
+    <h3>User management</h3>
+  </header>
+  <form hx-post="<%= url_for('ajax.admin.users') %>"
+    hx-target="#action_thing"
+    hx-swap="innerHtml">
+    <fieldset class="grid">
+      <button name="frag" type="submit" value="create">Create</button>
+      <button name="frag" type="submit" value="export">Export</button>
+      <button name="frag" type="submit" value="import" disabled>Import</button>
+    </fieldset>
+  </form>
+</article>
+
+<div id="action_thing">
+</div>
+
+<article>
+  <header>
+    <h3>User table</h3>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Name</p>
+        <th scope="col">E-Mail</p>
+        <th scope="col">Username</p>
+        <th scope="col"></p>
+      </tr>
+    </thead>
+    <tbody>
+      <% for _, user in ipairs(users) do %>
+      <tr>
+        <th scope="row"><%= user.name %></th>
+        <td><%= user.email %></td>
+        <td><%= user.username %></td>
+        <td>
+          <form hx-post="<%= url_for('ajax.admin.users') %>"
+            hx-target="#action_thing"
+            hx-swap="innerHtml">
+            <input name="id" type="hidden" value="<%= user.id %>">
             <div role="group">
-              <button name="edit" type="submit">Edit</button>
-              <button type="button">Delete</button>
+              <button name="frag" type="submit" value="update">Edit</button>
+              <button name="frag" type="submit" value="delete">Delete</button>
             </div>
           </form>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <footer>
+  <p>1</p>
+  </footer>
 </article>
+
+<script>
+const kill_thing = () => { document.getElementById("action_thing").innerHTML = ''; }
+</script>

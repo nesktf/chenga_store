@@ -4,6 +4,7 @@ local app = lapis.make_app{}
 
 app:before_filter(function(self)
   self.site_name = lapis.config.site_name
+  self.page_title = self.site_name
 
   function self:getstr(name)
     return locale.getstr(name)

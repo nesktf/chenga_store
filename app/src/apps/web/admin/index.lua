@@ -16,8 +16,19 @@ local function retrieve_stats(self)
   stats.prod_count = Mangas:count()
   stats.tag_count = Tags:count()
 
-  stats.sales_count = Sales:count()
-  stats.sales_total = Sales:get_total()
+  local sales = Sales:count()
+  if (sales == 0) then
+    stats.sales_count = "0 :("
+  else
+    stats.sales_count = sales
+  end
+
+  local moni = Sales:get_total()
+  if (moni == 0) then
+    stats.sales_total = "0 :("
+  else
+    stats.sales_total = moni
+  end
 
   return stats
 end

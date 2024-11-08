@@ -8,31 +8,39 @@
 </article>
 
 <article id="content">
-  <section>
-    <h2> Users </h2>
-    <p> User count: <%= stats.user_count %> </p>
-    <p> Admin count: <%= stats.admin_count %> </p>
-  </section>
+  <header>
+    <h3>Stats</h3>
+  </header>
 
-  <section>
-    <h2> Products </h2>
-    <p> Product count: <%= stats.prod_count %> </p>
-    <p> Tag count: <%= stats.tag_count %> </p>
-  </section>
+  <fieldset class="grid">
+    <section>
+      <h2> Users </h2>
+      <p> User count: <%= stats.user_count %> </p>
+      <p> Admin count: <%= stats.admin_count %> </p>
+    </section>
 
-  <section>
-    <h2> Sales </h2>
-    <p> Sales count: <%= stats.sales_count %> </p>
-    <p> Sales total: $<%= stats.sales_total %> </p>
-  </section>
+    <section>
+      <h2> Products </h2>
+      <p> Product count: <%= stats.prod_count %> </p>
+      <p> Tag count: <%= stats.tag_count %> </p>
+    </section>
+
+    <section>
+      <h2> Sales </h2>
+      <p> Sales count: <%= stats.sales_count %> </p>
+      <p> Sales total: $<%= stats.sales_total %> </p>
+    </section>
+  </fieldset>
 </article>
 
 <article>
-  <h2>Manage things</h2>
-  <div role="group">
+  <header>
+    <h3>Manage things</h3>
+  </header>
+  <fieldset class="grid">
     <a href="<%= url_for('web.admin.users') %>" role="button">Users</a>
     <a href="<%= url_for('web.admin.manga') %>" role="button">Products</a>
-  </div>
+  </fieldset>
 </article>
 
 <script src="/static/js/modal_toggle.js"></script>

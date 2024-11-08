@@ -5,7 +5,7 @@ local app = lapis.make_app {
 }
 
 app:match("users", "/users", lapis.capture_action(require("apps.ajax.admin.users")))
-app:match("products", "/products", lapis.capture_action(require("apps.ajax.admin.products")))
+app:match("manga", "/manga", lapis.capture_action(require("apps.ajax.admin.manga")))
 app:match("stats", "/stats", lapis.capture_action(require("apps.ajax.admin.stats")))
 
 return app

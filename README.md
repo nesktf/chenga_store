@@ -1,4 +1,3 @@
-# Chenga Store
 <div align="center">
     <picture>
         <source
@@ -11,10 +10,11 @@
     </picture>
 </div>
 
+# Chenga
 Simple manga e-commerce I made for a college project. Writen in Lua, using 
 [lapis](https://github.com/leafo/lapis),
 [htmx](https://github.com/bigskysoftware/htmx),
-and [picocss](https://github.com/yshui/picom/).
+and [picocss](https://github.com/picocss/pico).
 
 ## Running
 Only tested on Debian 12 Bookworm, should work fine in other distros.

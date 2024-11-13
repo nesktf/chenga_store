@@ -26,20 +26,26 @@
       <div id="purchase_status"></div>
 
       <% if (manga.stock > 0) then %>
-      <form>
-        <input type="hidden" value="<%= manga.id %>">
-        <div role="group">
-          <input type="number"
-            name="quantity"
-            value="1"
-            placeholder="Quantity" 
-            min="1" max="<%= manga.stock %>">
-          <p>Available: <%= manga.stock %></p>
-        </div>
+<!--        <form action="<%= url_for('web.user.cart') %>" method="post">
+          <input name="manga_id" type="hidden" value="<%= manga.id %>">
+          <div role="group">
 
-        <button>Buy</button>
-        <button>Add to cart</button>
-      </form>
+            <p>Available: <%= manga.stock %></p>
+          </div>
+          <button type="submit">Buy</button>
+        </form> -->
+        <form hx-post="<%= url_for('ajax.user.manga') %>"
+          hx-target="#purchase_status"
+          hx-swap"innerHTML">
+            <input type="number"
+              name="quantity"
+              value="1"
+              placeholder="Quantity" 
+              min="1" max="<%= manga.stock %>">
+          <button type="submit">Add to cart</button>
+          <input name="__ajax_frag" value="add_fragment" type="hidden">
+          <input name="manga_id" type="hidden" value="<%= manga.id %>">
+        </form>
       <% else %>
       <button disabled>No stock available!</button>
       <% end %>

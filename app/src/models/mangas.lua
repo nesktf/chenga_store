@@ -7,6 +7,7 @@ local Mangas = Model:extend("mangas", {
   relations = {
     { "cart_items", has_many = "CartItems" },
     { "manga_tags", has_many = "MangaTags" },
+    { "sales", has_many = "Sales" },
   }
 })
 

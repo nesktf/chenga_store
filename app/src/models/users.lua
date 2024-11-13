@@ -6,9 +6,11 @@ local errcode = error.code
 local bcrypt = require("bcrypt")
 local secret = require("common").lapis.config.secret
 
+local UserCarts = require("models.user_carts")
+
 local Users = Model:extend("users", {
   relations = {
-    { "cart_items", has_many = "CartItems" },
+    { "user_cart", has_one = "UserCarts" },
     { "sales", has_many = "Sales" }
   }
 })
@@ -46,6 +48,16 @@ function Users:new(params)
   local user, err = self:create(params)
   if (not user) then
     return errcode.db_create("Failed to create user '%s': %s", params.username, err)
+  end
+
+  local cart, cerr = UserCarts:new {
+    subtotal = 0,
+    discount = 0,
+    total = 0,
+    user_id = user.id
+  }
+  if (not cart )then
+    return errcode.db_create("Failed to create cart for user %s: %s", params.username, cerr)
   end
 
   return user
@@ -89,15 +101,16 @@ function Users:delete(username)
     return errcode.db_delete(gerr)
   end
 
-  for _, item in ipairs(user:get_cart_items()) do
-    item:delete()
-  end
+  -- user:get_user_cart():delete()
+  -- for _, item in ipairs(user:get_cart_items()) do
+  --   item:delete()
+  -- end
 
-  for _, sale in ipairs(user:get_sales()) do
-    sale:update({
-      user_id = db.NULL,
-    })
-  end
+  -- for _, sale in ipairs(user:get_sales()) do
+  --   sale:update({
+  --     user_id = db.NULL,
+  --   })
+  -- end
 
   local success = user:delete()
   if (not success) then

@@ -27,7 +27,7 @@ local function retrieve_stats(self)
   if (moni == 0) then
     stats.sales_total = "0 :("
   else
-    stats.sales_total = moni
+    stats.sales_total = string.format("$%.2f", moni/100)
   end
 
   return stats

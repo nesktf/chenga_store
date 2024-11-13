@@ -1,3 +1,4 @@
+local db     = require("lapis.db")
 local schema = require("lapis.db.schema")
 local types = schema.types
 
@@ -22,18 +23,25 @@ local function init_tables()
     { "image_path", types.text{ null = true } },
   })
 
-  schema.create_table("cart_items", {
+  schema.create_table("user_carts", {
     { "id", types.serial{ unique = true, primary_key = true } },
-    { "price", types.integer },
-    { "quantity", types.integer },
     { "subtotal", types.integer },
     { "discount", types.integer },
     { "total", types.integer },
 
     { "user_id", types.foreign_key },
-    { "manga_id", types.foreign_key },
 
     "FOREIGN KEY (user_id) REFERENCES users",
+  })
+
+  schema.create_table("cart_items", {
+    { "id", types.serial{ unique = true, primary_key = true } },
+    { "quantity", types.integer },
+
+    { "user_cart_id", types.foreign_key },
+    { "manga_id", types.foreign_key },
+
+    "FOREIGN KEY (user_cart_id) REFERENCES user_carts",
     "FOREIGN KEY (manga_id) REFERENCES mangas",
   })
 
@@ -54,12 +62,15 @@ local function init_tables()
 
   schema.create_table("sales", {
     { "id", types.serial{ unique = true, primary_key = true } },
-    { "sale_time", types.time },
+    { "sale_time", types.integer },
+    { "quantity", types.integer },
     { "total", types.integer },
 
-    { "user_id", types.foreign_key{ null = true } },
+    { "user_id", types.foreign_key },
+    { "manga_id", types.foreign_key },
     
     "FOREIGN KEY (user_id) REFERENCES users",
+    "FOREIGN KEY (manga_id) REFERENCES mangas",
   })
 
   schema.create_table("vouchers",  {

@@ -1,3 +1,4 @@
+<div id="cart_content">
 <article>
   <nav aria-label="breadcrumb">
     <ul>
@@ -8,5 +9,43 @@
 </article>
 
 <article>
-  <h1>cart</h1>
+  <header>
+    <h3>cart</h3>
+  </header>
+
+  <% if (#cart > 0) then %>
+  <% for _, item in ipairs(cart) do %>
+    <h4><%= item.manga.name %></h4>
+    <div class="grid">
+    <p>Price: <%= string.format("$%.2f", item.manga.price/100) %></p>
+    <p>Quantity: <%= item.quantity %></p>
+    <p>Total item: <%= string.format("$%.2f", item.quantity*(item.manga.price/100)) %></p>
+    </div>
+  <% end %>
+  <h2>Total</h2>
+  <p> Total cart: <%= cart_total %></p>
+
+  <form hx-post="<%= url_for('ajax.user.cart') %>"
+    hx-target="#cart_content"
+    hx-swap="innerHTML">
+
+    <input type="hidden" name="user_id" value="<%= user.id %>">
+    <button name="__ajax_frag" value="buy_thing" type="submit">Buy things</button>
+  </form>
+
+  <form hx-post="<%= url_for('ajax.user.cart') %>"
+    hx-target="#cart_content"
+    hx-swap="outerHTML">
+
+    <input type="hidden" name="user_id" value="<%= user.id %>">
+    <button name="__ajax_frag" value="remove_things" type="submit">Clear</button>
+  <% else %>
+    <% if (buy_message) then %>
+  <p> Payment successful! </p>
+    <% else %>
+  <p> No items in cart!</p>
+    <% end %>
+  <% end %>
+
 </article>
+</div>

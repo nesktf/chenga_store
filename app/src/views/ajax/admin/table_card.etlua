@@ -41,29 +41,25 @@
   </table>
 
   <footer>
-    <form hx-post="<%= url_for(ajax_action) %>"
-      hx-target="#table_card"
-      hx-swap="outerHtml">
-      <fieldset class="grid">
-        <% for i=1, page_count do %>
-          <% if (i == page_index) then %>
-        <button disabled><%= i %></button>
-          <% else %>
-        <div hx-post="<%= url_for(ajax_action) %>"
-          hx-target="#table_card"
-          hx-include="this"
-          hx-swap="outerHTML"
-          hx-trigger="click"
-          role="button">
-          <%= i %>
-          <input name="__ajax_frag" value="table_card" type="hidden">
-          <input name="page_index" value="<%= i %>" type="hidden">
-          <input name="crud_target" value="<%= crud_target %>" type="hidden">
-        </div>
-          <% end %>
+    <fieldset class="grid">
+      <% for i=1, page_count do %>
+        <% if (i == page_index) then %>
+      <button disabled><%= i %></button>
+        <% else %>
+      <div hx-post="<%= url_for(ajax_action) %>"
+        hx-target="#table_card"
+        hx-include="this"
+        hx-swap="outerHTML"
+        hx-trigger="click"
+        role="button">
+        <%= i %>
+        <input name="__ajax_frag" value="table_card" type="hidden">
+        <input name="page_index" value="<%= i %>" type="hidden">
+        <input name="crud_target" value="<%= crud_target %>" type="hidden">
+      </div>
         <% end %>
-      </fieldset>
-    </form>
+      <% end %>
+    </fieldset>
   </footer>
 
   <% else %>

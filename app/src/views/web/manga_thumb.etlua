@@ -5,5 +5,5 @@
   <img src="<%= manga.image_path %>" class="manga_image" alt="<%= manga.name %>">
   <p>Price: <%= string.format("$%.2f", manga.price / 100) %></p>
   <p>Stock: <%= manga.stock  %></p>
-  <div role="button"><a href="<%= url_for('web.manga', { id=manga.id }) %>">Details</a></div>
+  <a role="button" href="<%= url_for('web.manga', { id=manga.id }) %>">Details</a>
 </article>

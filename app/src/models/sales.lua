@@ -6,21 +6,24 @@ local errcode = error.code
 local Sales = Model:extend("sales", {
   relations = {
     { "user", belongs_to = "Users" },
+    { "manga", belongs_to = "Mangas" }
   }
 })
 
 Sales.validate = error.make_validator {
-  sale_time = types.custom(function(val)
-    if (val == nil) then
-      return nil, "Sale time can't be null"
-    end
-
-    -- TODO: validate time
-
-    return true
-  end),
+  sale_time = types.number,
+  -- sale_time = types.custom(function(val)
+  --   if (val == nil) then
+  --     return nil, "Sale time can't be null"
+  --   end
+  --
+  --   -- TODO: validate time
+  --
+  --   return true
+  -- end),
   total = types.number,
-  user_id = types.db_id:is_optional(),
+  user_id = types.db_id,
+  manga_id = types.db_id,
 }
 
 

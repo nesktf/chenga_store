@@ -28,9 +28,10 @@
     <section>
       <h2> Sales </h2>
       <p> Sales count: <%= stats.sales_count %> </p>
-      <p> Sales total: $<%= stats.sales_total %> </p>
+      <p> Sales total: <%= stats.sales_total %> </p>
     </section>
   </fieldset>
+  <button>Make report</button>
 </article>
 
 <article>

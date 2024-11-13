@@ -11,13 +11,17 @@ local CartItems = Model:extend("cart_items", {
 })
 
 CartItems.validate = error.make_validator {
-  price = types.number,
+  -- price = types.number,
+  -- quantity = types.number,
+  -- subtotal = types.number,
+  -- discount = types.number,
+  -- total = types.number,
+  -- user_id = types.db_id,
+  -- manga_id = types.db_id,
   quantity = types.number,
-  subtotal = types.number,
-  discount = types.number,
-  total = types.number,
-  user_id = types.db_id,
+  user_cart_id = types.db_id,
   manga_id = types.db_id,
+
 }
 
 

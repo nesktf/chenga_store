@@ -64,4 +64,31 @@ function _M.ajax_render(view)
   return { render = view, layout = false }
 end
 
+function _M.make_ajax_action(frags)
+  local action = _M.make_action()
+
+  function action:POST()
+    if (not self.params.__ajax_frag) then
+      error.yield(error.code.field_not_found, "No fragment provided")
+    end
+    local frag = self.params.__ajax_frag
+
+    local frag_fun = frags[frag]
+    if (not frag_fun) then
+      error.yield(error.code.field_invalid, "Fragment not found %s", frag)
+    end
+    return frag_fun(self)
+  end
+
+  if (frags.on_error and type(frags.on_error) == "function") then
+    action.on_error = frags.on_error
+  else
+    action.on_error = function(_)
+      return _M.ajax_render("ajax.error")
+    end
+  end
+
+  return action
+end
+
 return _M

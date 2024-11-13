@@ -1,12 +1,24 @@
-<div class="ajax_err">
+<<%= is_card and "article" or "div" %> class="ajax_err">
+  <% if (is_card) then %>
+  <header>
+  <% end %>
+
   <% if (error_title) then %>
   <h2><%= error_title %></h2>
   <% else %>
   <h2>Invalid ajax request</h2>
   <% end %>
 
-  <% for _, err in ipairs(errors) do %>
-  <p><%= err.msg %></p>
-  <p>Code: <%= err.code %></p>
+  <% if (is_card) then %>
+  </header>
   <% end %>
-</div>
+
+  <% for _, err in ipairs(errors) do %>
+    <% if (type(err) == "table") then %>
+  <p>Code: <%= err.code %></p>
+  <p><%= err.what %></p>
+    <% else %>
+  <p><%= err %></p>
+    <% end %>
+  <% end %>
+</<%= is_card and "article" or "div" %>>

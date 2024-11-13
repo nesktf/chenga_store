@@ -8,12 +8,18 @@
 </article>
 
 <article>
-  <h3>search results for "<%= params.q %>"</h3>
+  <% if (params.q == "") then %>
+  <h3>Listing all manga in the database</h3>
+  <% else %>
+  <h3>Search results for "<%= params.q %>"</h3>
+  <% end %>
   <% if (not mangas) then %>
     <p> Nothing found lol </p>
   <% else %>
+    <div class="grid">
     <% for _, manga in ipairs(mangas) do %>
-      <p><%= manga.name %></p>
+      <% render('views.web.manga_thumb', { manga = manga }) %>
     <% end %>
+    </div>
   <% end %>
 </article>

@@ -1,0 +1,72 @@
+<article id="table_card">
+  <header>
+    <h3><%= card_title %></h3>
+  </header>
+
+  <% if (#data_rows > 0) then %>
+  <table>
+    <thead>
+      <tr>
+        <% for _, col in ipairs(col_names) do %>
+        <th scope="col"><%= col %></p>
+        <% end %>
+        <th scope="col"></p>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% for _, row in ipairs(data_rows) do %>
+        <tr>
+          <% for i=1,#row.content do %>
+            <% if (i == 1) then %>
+          <th scope="row"><%= row.content[i] %></th>
+            <% else %>
+          <td><%= row.content[i] %></th>
+            <% end %>
+          <% end %>
+          <td>
+            <form hx-post="<%= url_for(ajax_action) %>"
+              hx-target="#<%= crud_target %>"
+              hx-swap="innerHTML">
+              <input name="id" type="hidden" value="<%= row.form_id %>">
+              <div role="group">
+                <button name="__ajax_frag" type="submit" value="crud_update">Edit</button>
+                <button name="__ajax_frag" type="submit" value="crud_delete">Delete</button>
+              </div>
+            </form>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <footer>
+    <form hx-post="<%= url_for(ajax_action) %>"
+      hx-target="#table_card"
+      hx-swap="outerHtml">
+      <fieldset class="grid">
+        <% for i=1, page_count do %>
+          <% if (i == page_index) then %>
+        <button disabled><%= i %></button>
+          <% else %>
+        <div hx-post="<%= url_for(ajax_action) %>"
+          hx-target="#table_card"
+          hx-include="this"
+          hx-swap="outerHTML"
+          hx-trigger="click"
+          role="button">
+          <%= i %>
+          <input name="__ajax_frag" value="table_card" type="hidden">
+          <input name="page_index" value="<%= i %>" type="hidden">
+          <input name="crud_target" value="<%= crud_target %>" type="hidden">
+        </div>
+          <% end %>
+        <% end %>
+      </fieldset>
+    </form>
+  </footer>
+
+  <% else %>
+  <p> Nothing found! </p>
+  <% end %>
+</article>

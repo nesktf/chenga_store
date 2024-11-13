@@ -24,7 +24,7 @@ app:include((function()
   }
 
   pages:match("index", "/", lapis.capture_action(require("apps.web.index")))
-  pages:match("manga", "/manga", lapis.capture_action(require("apps.web.manga")))
+  pages:match("manga", "/manga/:id", lapis.capture_action(require("apps.web.manga")))
   pages:match("search", "/search", lapis.capture_action(require("apps.web.search")))
 
   return pages

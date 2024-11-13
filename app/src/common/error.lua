@@ -36,12 +36,17 @@ end
 function _M.throw(code, msg, ...)
   return nil, {
     code = code,
-    msg = string.format(msg, ...)
+    what = string.format(msg, ...)
   }
 end
 
-function _M.yield(ex, msg, ...)
-  lapis_util.yield_error(ex(msg, ...))
+function _M.yield(thing, ...)
+  if (type(thing) == "function") then
+    local _, err = thing(...)
+    lapis_util.yield_error(err)
+  else
+    lapis_util.yield_error(thing)
+  end
 end
 
 _M.code = (function()

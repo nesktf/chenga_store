@@ -1,0 +1,53 @@
+<form hx-post="<%= url_for('ajax.admin.manga') %>"
+  hx-target="#crud_status"
+  hx-encoding="multipart/form-data"
+  hx-swap="innerHTML"
+  _='on htmx:xhr:progress(loaded, total) set #manga_prog.value to (loaded/total)*100'
+  id="manga_form">
+  <article>
+    <header>
+      <h3>Create product entry</h3>
+    </header>
+
+    <label>
+      Name
+      <input name="name" placeholder="Name">
+    </label>
+
+    <label>
+      Author
+      <input name="author" placeholder="Author">
+    </label>
+
+    <label>
+      ISBN
+      <input name="isbn" placeholder="ISBN">
+    </label>
+
+    <label>
+      Stock
+      <input name="stock" placeholder="Stock">
+    </label>
+
+    <label>
+      Price
+      <input name="price" placeholder="Price">
+    </label>
+
+    <label>
+      Image
+      <input name="manga_image" type="file">
+    </label>
+
+
+    <div id="crud_status"></div>
+
+    <footer>
+      <fieldset class="grid">
+        <button type="button" class="secondary" onClick="kill_thing();">Cancel</button>
+        <button name="__ajax_frag" type="submit" value="create_status">Send</button>
+      </fieldset>
+    </footer>
+    <progress id="manga_prog" value="0" max="100"></progress>
+  </article>
+</form>

@@ -5,7 +5,7 @@ local Mangas = require("models.mangas")
 
 local function populate_products(param, limit, offset)
   local mangas = Mangas:select([[
-    where name like '%' || ? || '%' order by name asc limit ? offset ?
+    where lower(name) like lower('%' || ? || '%') order by name asc limit ? offset ?
   ]], param, limit, offset)
   if (#mangas == 0) then
     return nil

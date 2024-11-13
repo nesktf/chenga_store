@@ -1,57 +1,111 @@
 local lapis = require("common").lapis
 local error = require("common").error
+local errcode = error.code
+local md5 = require("md5")
+local Mangas = require("models.mangas")
 
-local action = lapis.make_action()
+local frag = {}
 
-local function render_prods(self)
-  self.prod_max_index = 2
-  self.prod_index = self.params.index and tonumber(self.params.index) or 0
-  self.prods = (function()
-    local prods = {}
+function frag:table_card()
+  if (not self.params.crud_target) then
+    error.yield(errcode.field_not_found, "table_card: No crud target provided")
+  end
+  local crud_target = self.params.crud_target
 
-    for i = 0 + self.prod_index*10, 9 + self.prod_index*10, 1 do
-      table.insert(prods, {
-        name="prod"..tostring(i),
-        value=i,
+  if (not self.params.page_index) then
+    error.yield(errcode.field_not_found, "table_card: No table index provided")
+  end
+  local page_index = tonumber(self.params.page_index)
+
+  local max_manga = 10
+  local total_manga = Mangas:count()
+
+  self.ajax_action = "ajax.admin.manga"
+  self.crud_target = crud_target
+  self.card_title = "Product table"
+  self.page_count = math.ceil(total_manga/max_manga)
+  self.page_index = page_index
+  self.col_names = { "Name", "ISBN", "Stock", "Price" }
+  self.data_rows = (function()
+    local out = {}
+
+    local manga = error.assert(Mangas:select("order by name asc limit ? offset ?", 
+      max_manga, max_manga*(page_index-1), {
+      fields = "id,name,isbn,stock,price",
+    }))
+
+    for _,field in ipairs(manga) do
+      table.insert(out, {
+        form_id = field.id,
+        content = { field.name, field.isbn == "" and "N/A" or field.isbn, field.stock, 
+          string.format("$%.2f", field.price/100) }
       })
     end
 
-    return prods
+    return out
   end)()
-  return lapis.ajax_render("ajax.admin.products")
+
+  return lapis.ajax_render("ajax.admin.table_card")
 end
 
-local function render_submit_form(_)
-  return lapis.ajax_render("ajax.admin.newprod")
+function frag:crud_create()
+  return lapis.ajax_render("ajax.admin.manga_create")
 end
 
-local function submit_prod(self)
-  return self:write(string.format("tings: %s %s %s", 
-    self.params.prod_name, self.params.prod_stock, self.params.prod_provider),
-    {layout = false})
-end
+function frag:create_status()
+  local image_path = error.assert((function(image)
+    local function file_exists(path)
+      local f = io.open(path, 'r')
+      return f ~= nil and io.close(f)
+    end
 
-function action:POST()
-  local frag = self.params.frag
-  error.assert(frag)
+    if (not image) then
+      return errcode.field_not_found("No manga image provided")
+    end
 
-  if (frag == "newprod") then
-    return render_submit_form(self)
+    local hash = md5.sumhexa(image.content)
+    local ext = image.filename:match("^.+(%..+)$")
+
+    local path = string.format("./static/image/%s%s", hash, ext)
+    if (file_exists(path)) then
+      return path -- Reuse image if hash matches
+    end
+
+    local file = io.open(path, 'w')
+    if (not file) then
+      return errcode.db_create("Failed to open image file")
+    end
+
+    file:write(image.content)
+    file:close()
+
+    return path
+  end)(self.params.manga_image))
+
+  local params = {
+    name = self.params.name,
+    author = self.params.author,
+    isbn = self.params.isbn,
+    stock = self.params.stock,
+    price = self.params.price,
+    image_path = image_path,
+  }
+
+  local status, err = Mangas:new(params)
+
+  if (not status) then
+    os.remove(image_path)
+    error.yield(err)
   end
 
-  if (frag == "products") then
-    return render_prods(self)
-  end
-
-  if (frag == "submit_prod") then
-    return submit_prod(self)
-  end
-
-  error.yield("Invalid fragment")
-end
-
-function action:on_error()
+  self.errors = {
+    { what = ":D", code = 0 }
+  }
   return lapis.ajax_render("ajax.error")
 end
 
-return action
+function frag:on_error()
+  return lapis.ajax_render("ajax.error")
+end
+
+return lapis.make_ajax_action(frag)

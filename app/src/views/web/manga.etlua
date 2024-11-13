@@ -1,1 +1,52 @@
-<h1>product</h1>
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>manga</li>
+    </ul>
+  </nav>
+</article>
+
+
+<article>
+  <header>
+    <h3> Manga </h3>
+  </header>
+  <div class="grid">
+    <img src="<%= manga.image_path:sub(2) %>" alt="<%= manga.name %>">
+    <div>
+      <h3><%= manga.name %></h3>
+      <p>Author: <%= manga.author %></p>
+      <% if (manga.isbn ~= "") then %>
+      <p>ISBN: <%= manga.isbn %></p>
+      <% end %>
+      <p>Price: <%= string.format("$%.2f", manga.price/100) %></p>
+
+
+      <div id="purchase_status"></div>
+
+      <% if (manga.stock > 0) then %>
+      <form>
+        <input type="hidden" value="<%= manga.id %>">
+        <div role="group">
+          <input type="number"
+            name="quantity"
+            value="1"
+            placeholder="Quantity" 
+            min="1" max="<%= manga.stock %>">
+          <p>Available: <%= manga.stock %></p>
+        </div>
+
+        <button>Buy</button>
+        <button>Add to cart</button>
+      </form>
+      <% else %>
+      <button disabled>No stock available!</button>
+      <% end %>
+    </div>
+  </div>
+
+  <footer>
+    <p>:DDDD</p>
+  </footer>
+</article>

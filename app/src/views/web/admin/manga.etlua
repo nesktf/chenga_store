@@ -8,9 +8,34 @@
   </nav>
 </article>
 
-<div id="action_thing">
+<article>
+  <header>
+    <h3>Product management</h3>
+  </header>
+  <form hx-post="<%= url_for('ajax.admin.manga') %>"
+    hx-target="#crud_card"
+    hx-swap="innerHTML">
+    <fieldset class="grid">
+      <button name="__ajax_frag" value="crud_create" type="submit">Create</button>
+      <button name="__ajax_frag" value="crud_export" type="submit">Export</button>
+      <button name="__ajax_frag" value="crud_import" type="submit" disabled>Import</button>
+    </fieldset>
+  </form>
+</article>
+
+<div id="crud_card"></div>
+
+<div hx-post="<%= url_for('ajax.admin.manga') %>"
+  hx-target="this"
+  hx-swap="outerHTML"
+  hx-include="this"
+  hx-trigger="load"
+  id="table_card">
+  <input name="__ajax_frag" value="table_card" type="hidden">
+  <input name="page_index" value="1" type="hidden">
+  <input name="crud_target" value="crud_card" type="hidden">
 </div>
 
-<article>
-<h1> manga </h1>
-</article>
+<script>
+const kill_thing = () => { document.getElementById("crud_card").innerHTML = ''; }
+</script>

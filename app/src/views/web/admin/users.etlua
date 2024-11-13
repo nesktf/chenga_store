@@ -14,60 +14,29 @@
     <h3>User management</h3>
   </header>
   <form hx-post="<%= url_for('ajax.admin.users') %>"
-    hx-target="#action_thing"
-    hx-swap="innerHtml">
+    hx-target="#crud_card"
+    hx-swap="innerHTML">
     <fieldset class="grid">
-      <button name="frag" type="submit" value="create">Create</button>
-      <button name="frag" type="submit" value="export">Export</button>
-      <button name="frag" type="submit" value="import" disabled>Import</button>
+      <button name="__ajax_frag" value="crud_create" type="submit">Create</button>
+      <button name="__ajax_frag" value="crud_export" type="submit">Export</button>
+      <button name="__ajax_frag" value="crud_import" type="submit" disabled>Import</button>
     </fieldset>
   </form>
 </article>
 
-<div id="action_thing">
+<div id="crud_card"></div>
+
+<div hx-post="<%= url_for('ajax.admin.users') %>"
+  hx-target="this"
+  hx-swap="outerHTML"
+  hx-include="this"
+  hx-trigger="load"
+  id="table_card">
+  <input name="__ajax_frag" value="table_card" type="hidden">
+  <input name="page_index" value="1" type="hidden">
+  <input name="crud_target" value="crud_card" type="hidden">
 </div>
 
-<article>
-  <header>
-    <h3>User table</h3>
-  </header>
-
-  <table>
-    <thead>
-      <tr>
-        <th scope="col">Name</p>
-        <th scope="col">E-Mail</p>
-        <th scope="col">Username</p>
-        <th scope="col"></p>
-      </tr>
-    </thead>
-    <tbody>
-      <% for _, user in ipairs(users) do %>
-      <tr>
-        <th scope="row"><%= user.name %></th>
-        <td><%= user.email %></td>
-        <td><%= user.username %></td>
-        <td>
-          <form hx-post="<%= url_for('ajax.admin.users') %>"
-            hx-target="#action_thing"
-            hx-swap="innerHtml">
-            <input name="id" type="hidden" value="<%= user.id %>">
-            <div role="group">
-              <button name="frag" type="submit" value="update">Edit</button>
-              <button name="frag" type="submit" value="delete">Delete</button>
-            </div>
-          </form>
-        </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
-
-  <footer>
-  <p>1</p>
-  </footer>
-</article>
-
 <script>
-const kill_thing = () => { document.getElementById("action_thing").innerHTML = ''; }
+const kill_thing = () => { document.getElementById("crud_card").innerHTML = ''; }
 </script>

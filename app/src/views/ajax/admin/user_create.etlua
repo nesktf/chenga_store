@@ -23,6 +23,10 @@
       <input name="username" placeholder="Username" />
     </label>
     <label>
+      Password
+      <input name="password" placeholder="Password" type="password">
+    </label>
+    <label>
       <input name="is_admin" type="checkbox" role="switch" />
       Is Admin
     </label>
@@ -33,7 +37,7 @@
     <footer>
       <fieldset class="grid">
         <button type="button" class="secondary" onClick="kill_thing();">Cancel</button>
-        <button name="req" type="submit" value="create">Send</button>
+        <button name="__ajax_frag" type="submit" value="create_status">Send</button>
       </fieldset>
     </footer>
   </article>

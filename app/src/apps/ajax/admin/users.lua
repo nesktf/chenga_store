@@ -51,6 +51,8 @@ function frag:crud_delete()
     error.yield(errcode.field_invalid, "Invalid field for delete")
   end
 
+  self.user = error.assert(Users:get_by_id(self.params.id))
+
   return lapis.ajax_render("ajax.admin.user_delete")
 end
 
@@ -75,6 +77,33 @@ end
 
 function frag:crud_import()
   return lapis.ajax_render("ajax.admin.user_export")
+end
+
+function frag:create_status()
+  local params = {
+    name = self.params.name,
+    address = self.params.address,
+    email = self.params.email,
+    username = self.params.username,
+    password = self.params.password,
+  }
+  local _ = error.assert(Users:new(params))
+
+  self.error_title = "Success!"
+  self.errors = {
+    {what="User created!", code=0}
+  }
+  return lapis.ajax_render("ajax.error")
+end
+
+function frag:delete_status()
+  local _ = error.assert(Users:delete(self.params.username))
+
+  self.error_title = "Success!"
+  self.errors = {
+    {what="User deleted!", code=0}
+  }
+  return lapis.ajax_render("ajax.error")
 end
 
 

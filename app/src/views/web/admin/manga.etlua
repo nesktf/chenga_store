@@ -17,7 +17,7 @@
     hx-swap="innerHTML">
     <fieldset class="grid">
       <button name="__ajax_frag" value="crud_create" type="submit">Create</button>
-      <button name="__ajax_frag" value="crud_export" type="submit">Export</button>
+      <button name="__ajax_frag" value="crud_export" type="submit" disabled>Export</button>
       <button name="__ajax_frag" value="crud_import" type="submit" disabled>Import</button>
     </fieldset>
   </form>

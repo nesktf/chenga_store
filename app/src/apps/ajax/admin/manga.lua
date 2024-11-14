@@ -52,6 +52,24 @@ function frag:crud_create()
   return lapis.ajax_render("ajax.admin.manga_create")
 end
 
+function frag:crud_update()
+  if (not self.params.id) then
+    error.yield(errcode.field_not_found, "No id parameter")
+  end
+
+  self.manga = error.assert(Mangas:get(self.params.id))
+  return lapis.ajax_render("ajax.admin.manga_update")
+end
+
+function frag:crud_delete()
+  if (not self.params.id) then
+    error.yield(errcode.field_not_found, "No id parameter")
+  end
+
+  self.manga = error.assert(Mangas:get(self.params.id))
+  return lapis.ajax_render("ajax.admin.manga_delete")
+end
+
 function frag:create_status()
   local image_path = error.assert((function(image)
     local function file_exists(path)
@@ -98,9 +116,38 @@ function frag:create_status()
     error.yield(err)
   end
 
+  self.error_title = "Success"
   self.errors = {
-    { what = ":D", code = 0 }
+    { what = "Product uploaded!", code = 0 }
   }
+  return lapis.ajax_render("ajax.error")
+end
+
+function frag:update_status()
+  local params = {
+    name = self.params.name,
+    author = self.params.author,
+    isbn = self.params.isbn,
+    stock = self.params.stock,
+    price = self.params.price,
+  }
+
+  local _ = error.assert(Mangas:modify(self.params.manga_id, params))
+  self.error_title = "Success"
+  self.errors = {
+    { what = "Product modified!", code = 0} 
+  }
+  return lapis.ajax_render("ajax.error")
+end
+
+function frag:delete_status()
+  local _ = error.assert(Mangas:delete(self.params.manga_id))
+
+  self.error_title = "Success"
+  self.errors = {
+    { what = "Product deleted!", code = 0 }
+  }
+
   return lapis.ajax_render("ajax.error")
 end
 

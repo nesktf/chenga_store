@@ -80,11 +80,11 @@ function Mangas:delete(id)
     return errcode.db_delete(gerr)
   end
 
-  for _, item in ipairs(self:get_cart_items()) do
+  for _, item in ipairs(manga:get_cart_items()) do
     item:delete()
   end
 
-  for _, mtag in ipairs(self:get_manga_tags()) do
+  for _, mtag in ipairs(manga:get_manga_tags()) do
     mtag:delete()
   end
 

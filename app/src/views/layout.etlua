@@ -35,7 +35,6 @@
             <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
             <% end %>
             <li><a href="<%= url_for('web.user.cart') %>">cart</a></li>
-            <li><a href="<%= url_for('web.user.index') %>">settings</a></li>
             <li><a href="<%= url_for('web.user.login', nil, { logout = true }) %>">logout</a></li>
           </ul>
           </details>
@@ -52,6 +51,5 @@
   <% content_for('inner') %>
   </main>
 
-  <footer>CHEEEEEEEEEEEEEEEEEEEEEEN</footer>
 </body>
 </html>

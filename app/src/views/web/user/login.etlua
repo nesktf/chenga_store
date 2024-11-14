@@ -8,7 +8,7 @@
 </article>
 
 <article>
-  <h1>you have to login!!!11!</h1>
+  <h3>Login</h3>
   <form action="<%= url_for('web.user.login') %>" method="post">
     <input name="csrf_token" type="hidden" value="2" />
     <input type="text" name="username" value="<%= params.username or '' %>" placeholder="Username" />
@@ -23,7 +23,7 @@
 </article>
 
 <article>
-  <h1>or you can register too!!!</h1>
+  <h3>Register</h3>
   <form action="<%= url_for('web.user.login') %>" method="post">
     <input name="csrf_token" type="hidden" value="2" />
     <input type="text" name="name" value="" placeholder="Name" />

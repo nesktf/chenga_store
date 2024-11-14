@@ -103,7 +103,7 @@ function frag:update_status()
     address = self.params.address,
     email = self.params.email,
     username = self.params.username,
-    is_admin = self.params.is_admin,
+    is_admin = self.params.is_admin == "on" and true or false,
   }
   local _ = error.assert(Users:modify(self.params.username, params))
   self.error_title = "Success!"

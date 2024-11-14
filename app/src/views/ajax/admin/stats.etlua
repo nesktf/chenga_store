@@ -1,0 +1,25 @@
+<article>
+  <header>
+  <h3>Result</h3>
+  </header>
+<% if (req_type == "users") then %>
+  <% for _, user in ipairs(content) do %>
+  <div>
+    <h3><%= user[1] %> (<%= user[2] %>)</h3>
+    <p>Total sales: <%= user[3] %></p>
+    <p>Total spent: <%= user[4] %></p>
+  </div>
+  <% end %>
+<% else %>
+  <% for _, manga in ipairs(content) do %>
+  <div>
+    <h3><%= manga[1] %></h3>
+    <p>Total sales: <%= manga[2] %></p>
+    <p>Total: <%= manga[3] %></p>
+  </div>
+  <% end %>
+<% end %>
+  <footer>
+    <a href="<%= download_path %>" download>Download report</a>
+  </footer>
+</article>

@@ -31,7 +31,17 @@
       <p> Sales total: <%= stats.sales_total %> </p>
     </section>
   </fieldset>
-  <button>Make report</button>
+
+  <div id="report_thing"></div>
+
+  <form hx-post="<%= url_for('ajax.admin.stats') %>"
+    hx-target="#report_thing"
+    hx-swap="innerHTML">
+    <fieldset class="grid">
+      <button name="__ajax_frag" value="client_report", type="submit">Client report</button>
+      <button name="__ajax_frag" value="product_report", type="submit">Product report</button>
+    </fieldset>
+  </form>
 </article>
 
 <article>

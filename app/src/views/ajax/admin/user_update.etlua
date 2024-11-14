@@ -33,7 +33,7 @@
     <footer>
       <fieldset class="grid">
         <button type="button" class="secondary" onClick="kill_thing();">Cancel</button>
-        <button name="req" type="submit" value="update">Send</button>
+        <button name="__ajax_frag" type="submit" value="update_status">Send</button>
       </fieldset>
     </footer>
   </article>

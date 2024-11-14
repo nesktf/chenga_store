@@ -86,12 +86,29 @@ function frag:create_status()
     email = self.params.email,
     username = self.params.username,
     password = self.params.password,
+    is_admin = self.params.is_admin,
   }
   local _ = error.assert(Users:new(params))
 
   self.error_title = "Success!"
   self.errors = {
     {what="User created!", code=0}
+  }
+  return lapis.ajax_render("ajax.error")
+end
+
+function frag:update_status()
+  local params = {
+    name = self.params.name,
+    address = self.params.address,
+    email = self.params.email,
+    username = self.params.username,
+    is_admin = self.params.is_admin,
+  }
+  local _ = error.assert(Users:modify(self.params.username, params))
+  self.error_title = "Success!"
+  self.errors = {
+    {what="User modified!", code=0}
   }
   return lapis.ajax_render("ajax.error")
 end

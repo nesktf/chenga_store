@@ -1,7 +1,7 @@
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local error = require("common").error
-local errcode = error.code
+local error = require("util")
+local errcode = error.errcode
 
 local Mangas = Model:extend("mangas", {
   relations = {
@@ -45,7 +45,9 @@ Mangas.validate = error.make_validator {
 function Mangas:new(params)
   local manga, err = self:create(params)
   if (not manga) then
-    return errcode.db_create("Failed to create manga '%s': %s", params.name, err)
+    return nil, error.errcode_fmt(errcode.db_create,
+      "Failed to create manga '%s': %s", params.name, err
+    )
   end
 
   return manga
@@ -54,7 +56,9 @@ end
 function Mangas:get(id)
   local manga = self:find{id = id}
   if (not manga) then
-    return errcode.db_select("Manga with id %d not found", id)
+    return nil, error.errcode_fmt(errcode.db_select,
+      "Manga with id %d not found", id
+    )
   end
 
   return manga
@@ -63,12 +67,14 @@ end
 function Mangas:modify(id, params)
   local manga, gerr = self:get(id)
   if (not manga) then
-    return errcode.db_update(gerr)
+    return nil, gerr
   end
 
   local succ, err = manga:update(params)
   if (not succ) then
-    return errcode.db_update("Failed to update manga with id %d: %s", id, err)
+    return nil, error.errcode_fmt(errcode.db_update,
+      "Failed to update manga with id %d: %s", id, err
+    )
   end
 
   return manga
@@ -77,7 +83,7 @@ end
 function Mangas:delete(id)
   local manga, gerr = self:get(id)
   if (not manga) then
-    return errcode.db_delete(gerr)
+    return nil, gerr
   end
 
   for _, item in ipairs(manga:get_cart_items()) do
@@ -90,7 +96,9 @@ function Mangas:delete(id)
 
   local succ = manga:delete()
   if (not succ) then
-    return errcode.db_delete("Failed to delete manga with id %d", id)
+    return nil, error.errcode_fmt(errcode.db_delete,
+      "Failed to delete manga with id %d", id
+    )
   end
 
   return manga

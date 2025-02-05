@@ -1,7 +1,11 @@
-local lapis = require("common").lapis
+local lapis = require("lapis")
 local ngx = ngx
 
-local app = lapis.make_app{}
+local app = lapis.Application()
+app._base = app
+app.include = function(self, a)
+  self.__class.include(self, a, nil, self)
+end
 
 app:enable("etlua")
 app.layout = require("views.layout")

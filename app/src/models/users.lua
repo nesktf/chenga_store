@@ -1,10 +1,10 @@
-local db = require("lapis.db")
+-- local db = require("lapis.db")
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local error = require("common").error
-local errcode = error.code
+local u = require("util")
+local errcode = u.errcode
 local bcrypt = require("bcrypt")
-local secret = require("common").lapis.config.secret
+local secret = u.config.secret
 
 local UserCarts = require("models.user_carts")
 
@@ -15,7 +15,7 @@ local Users = Model:extend("users", {
   }
 })
 
-Users.validate = error.make_validator {
+Users.validate = u.make_validator {
   name = types.valid_text,
   address = types.valid_text,
   email = types.custom(function(val)
@@ -39,7 +39,9 @@ Users.validate = error.make_validator {
 
 function Users:new(params)
   if (not params.username or not params.password) then
-    return errcode.db_create("Failed to create user, invalid login parameters")
+    return nil, u.errcode_fmt(errcode.db_create,
+      "Failed to create user, invalid login parameters"
+    )
   end
 
   local prehash = params.username:lower()..params.password..secret
@@ -47,7 +49,9 @@ function Users:new(params)
 
   local user, err = self:create(params)
   if (not user) then
-    return errcode.db_create("Failed to create user '%s': %s", params.username, err)
+    return nil, u.errcode_fmt(errcode.db_create,
+      "Failed to create user '%s': %s", params.username, err
+    )
   end
 
   local cart, cerr = UserCarts:new {
@@ -57,7 +61,8 @@ function Users:new(params)
     user_id = user.id
   }
   if (not cart )then
-    return errcode.db_create("Failed to create cart for user %s: %s", params.username, cerr)
+    -- return errcode.db_create("Failed to create cart for user %s: %s", params.username, cerr)
+    return nil, cerr
   end
 
   return user
@@ -66,7 +71,9 @@ end
 function Users:get(username)
   local user = self:find{ username = username }
   if (not user) then
-    return errcode.db_select("Username '%s' not found", username)
+    return nil, u.errcode_fmt(errcode.db_select,
+      "Username '%s' not found", username
+    )
   end
 
   return user
@@ -75,7 +82,9 @@ end
 function Users:get_by_id(id)
   local user = self:find{ id = id }
   if (not user) then
-    return errcode.db_select("Username with id %d not found", id)
+    return nil, u.errcode_fmt(errcode.db_select,
+      "Username with id '%d' not found", id
+    )
   end
 
   return user
@@ -84,12 +93,14 @@ end
 function Users:modify(username, params)
   local user, gerr = self:get(username)
   if (not user) then
-    return errcode.db_update(gerr)
+    return nil, gerr
   end
 
   local success, err = user:update(params)
   if (not success) then
-    return errcode.db_update("Error updating user '%s': %s", username, err)
+    return nil, u.errcode_fmt(errcode.db_update,
+      "Error updating user '%s': %s", username, err
+    )
   end
 
   return user
@@ -98,7 +109,7 @@ end
 function Users:delete(username)
   local user, gerr = self:get(username)
   if (not user) then
-    return errcode.db_delete(gerr)
+    return nil, gerr
   end
 
   user:get_user_cart():delete()
@@ -114,7 +125,9 @@ function Users:delete(username)
 
   local success = user:delete()
   if (not success) then
-    return errcode.db_delete("Error deleting user '%s'", username)
+    return nil, u.errcode_fmt(errcode.db_delete,
+      "Error deleting user '%s'", username
+    )
   end
   return user
 end
@@ -130,17 +143,23 @@ end
 
 function Users:login(params)
   if (not params.username or not params.password) then
-    return errcode.field_invalid("Invalid parameters")
+    return nil, u.errcode_fmt(errcode.field_invalid,
+      "Invalid parameters"
+    )
   end
 
   local user = self:get(params.username)
   if (not user) then
-    return errcode.invalid_authorization("Invalid user %s", params.username)
+    return nil, u.errcode_fmt(errcode.invalid_auth,
+      "Invalid user '%s'", params.username
+    )
   end
 
   local prehash = user.username:lower()..params.password..secret
   if (not bcrypt.verify(prehash, user.password)) then
-    return errcode.password_not_match("Invalid password")
+    return nil, u.errcode_fmt(errcode.password_not_match,
+      "Invalid password"
+    )
   end
 
   return user

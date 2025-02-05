@@ -1,7 +1,7 @@
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local error = require("common").error
-local errcode = error.code
+local error = require("util")
+local errcode = error.errcode
 
 local UserCarts = Model:extend("user_carts", {
   relations = {
@@ -20,7 +20,9 @@ UserCarts.validate = error.make_validator {
 function UserCarts:new(params)
   local ucart, err = self:create(params)
   if (not ucart) then
-    return errcode.db_create("Failed to create user cart '%d': %s", params.user_id, err)
+    return nil, error.errcode_fmt(errcode.db_create,
+      "Failed to create user cart '%d': %s", params.user_id, err
+    )
   end
 
   return ucart
@@ -29,7 +31,9 @@ end
 function UserCarts:get(id)
   local ucart = self:find{ id = id }
   if (not ucart) then
-    return errcode.db_select("Cart with id '%d' not found", id)
+    return nil, error.errcode_fmt(errcode.db_select,
+      "Cart with id '%d' not found", id
+    )
   end
 
   return ucart
@@ -38,12 +42,14 @@ end
 function UserCarts:modify(id, params)
   local ucart, gerr = self:get(id)
   if (not ucart) then
-    return errcode.db_update(gerr)
+    return nil, gerr
   end
 
   local succ, err = ucart:update(params)
   if (not succ) then
-    return errcode.db_update("Error updating cart '%d': %s", id, err)
+    return nil, error.errcode_fmt(errcode.db_update,
+      "Error updating cart '%d': %s", id, err
+    )
   end
 
   return ucart
@@ -52,7 +58,7 @@ end
 function UserCarts:delete(id)
   local ucart, gerr = self:get(id)
   if (not ucart) then
-    return errcode.db_delete(gerr)
+    return nil, gerr
   end
 
   for _, item in ipairs(ucart:get_cart_items()) do
@@ -61,7 +67,9 @@ function UserCarts:delete(id)
 
   local succ = ucart:delete()
   if (not succ) then
-    return errcode.db_delete("Error deleting cart '%d'", id)
+    return nil, error.errcode_fmt(errcode.db_delete,
+      "Error deleting cart '%d'", id
+    )
   end
 
   return ucart

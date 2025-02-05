@@ -1,7 +1,7 @@
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local error = require("common").error
-local errcode = error.code
+local error = require("util")
+local errcode = error.errcode
 
 local Sales = Model:extend("sales", {
   relations = {
@@ -30,7 +30,9 @@ Sales.validate = error.make_validator {
 function Sales:new(params)
   local sale, err = self:create(params)
   if (not sale) then
-    return errcode.db_create("Failed to create sale: %s", err)
+    return nil, error.errcode_fmt(errcode.db_create,
+      "Failed to create sale: %s", err
+    )
   end
 
   return sale
@@ -39,7 +41,9 @@ end
 function Sales:get(id)
   local sale = self:find{id = id}
   if (not sale) then
-    return errcode.db_select("Sale with id %d not found", id)
+    return nil, error.errcode_fmt(errcode.db_select,
+      "Sale with id %d not found", id
+    )
   end
 
   return sale
@@ -48,12 +52,14 @@ end
 function Sales:modify(id, params)
   local sale, gerr = self:get(id)
   if (not sale) then
-    return errcode.db_update(gerr)
+    return nil, gerr
   end
 
   local succ, err = sale:update(params)
   if (not succ) then
-    return errcode.db_update("Failed to update sale with id %d: %s", id, err)
+    return nil, error.errcode_fmt(errcode.db_update,
+      "Failed to update sale with id %d: %s", id, err
+    )
   end
 
   return sale
@@ -62,12 +68,14 @@ end
 function Sales:delete(id)
   local sale, gerr = self:get(id)
   if (not sale) then
-    return errcode.db_delete(gerr)
+    return nil, gerr
   end
 
   local succ = sale:delete()
   if (not succ) then
-    return errcode.db_delete("Failed to delete sale with id %d", id)
+    return nil, error.errcode_fmt(errcode.db_delete,
+      "Failed to delete sale with id %d", id
+    )
   end
 
   return sale

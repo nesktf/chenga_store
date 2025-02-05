@@ -1,7 +1,7 @@
 local types = require("lapis.validate.types")
 local Model = require("lapis.db.model").Model
-local error = require("common").error
-local errcode = error.code
+local error = require("util")
+local errcode = error.errcode
 
 local MangaTags = Model:extend("manga_tags", {
   relations = {
@@ -18,7 +18,9 @@ MangaTags.validate = error.make_validator {
 function MangaTags:new(params)
   local mtag, err = self:create(params)
   if (not mtag) then
-    return errcode.db_create("Failed to add tag for manga %d: %s", params.manga_id, err)
+    return nil, error.errcode_fmt(errcode.db_create,
+      "Failed to add tag for manga %d: %s", params.manga_id, err
+    )
   end
 
   return mtag
@@ -27,7 +29,9 @@ end
 function MangaTags:get(id)
   local mtag = self:find{ id = id }
   if (not mtag) then
-    return errcode.db_select("Manga tag with id %d not found", id)
+    return nil, error.errcode_fmt(errcode.db_select,
+      "Manga tag with id %d not found", id
+    )
   end
 
   return mtag
@@ -36,12 +40,14 @@ end
 function MangaTags:modify(id, params)
   local mtag, gerr = self:get(id)
   if (not mtag) then
-    return errcode.db_update(gerr)
+    return nil, gerr
   end
 
   local succ, err = mtag:update(params)
   if (not succ) then
-    return errcode.db_update("Failed to update manga tag with id %d: %s", id, err)
+    return nil, error.errcode_fmt(errcode.db_update,
+      "Failed to update manga tag with id %d: %s", id, err
+    )
   end
 
   return mtag
@@ -50,12 +56,14 @@ end
 function MangaTags:delete(id)
   local mtag, gerr = self:get(id)
   if (not mtag) then
-    return errcode.db_delete(gerr)
+    return nil, gerr
   end
 
   local succ = mtag:delete()
   if (not succ) then
-    return errcode.db_delete("Failed to delete manga tag with id %d", id)
+    return nil, error.errcode_fmt(errcode.db_delete,
+      "Failed to delete manga tag with id %d", id
+    )
   end
 
   return mtag

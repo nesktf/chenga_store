@@ -149,7 +149,7 @@ return {
         local max_users = 10
         local total_users = Users:count()
 
-        self.action = "ajax.admin.users"
+        self.ajax_action = "ajax.admin.users"
         self.crud_target = crud_target
         self.card_title = "User table"
         self.page_count = math.ceil(total_users/max_users)
@@ -177,8 +177,8 @@ return {
     })
 
     page:match("manga", "/manga", page.action{
-      on_error = function(_)
-        return { render = "ajax.error", layout = false }
+      on_error = function(self)
+        return self:render("ajax.error")
       end,
       
       delete_status = function(self)
@@ -304,7 +304,7 @@ return {
         local max_manga = 10
         local total_manga = Mangas:count()
 
-        self.action = "ajax.admin.manga"
+        self.ajax_action = "ajax.admin.manga"
         self.crud_target = crud_target
         self.card_title = "Product table"
         self.page_count = math.ceil(total_manga/max_manga)

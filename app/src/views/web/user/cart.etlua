@@ -15,12 +15,18 @@
 
   <% if (#cart > 0) then %>
   <% for _, item in ipairs(cart) do %>
+  <form hx-post="<%= url_for('ajax.user.cart') %>"
+    hx-target="#cart_content"
+    hx-swap="outerHTML">
     <h4><%= item.manga.name %></h4>
     <div class="grid">
-    <p>Price: <%= string.format("$%.2f", item.manga.price/100) %></p>
-    <p>Quantity: <%= item.quantity %></p>
-    <p>Total item: <%= string.format("$%.2f", item.quantity*(item.manga.price/100)) %></p>
+      <p>Price: <%= string.format("$%.2f", item.manga.price/100) %></p>
+      <p>Quantity: <%= item.quantity %></p>
+      <p>Total item: <%= string.format("$%.2f", item.quantity*(item.manga.price/100)) %></p>
     </div>
+    <input type="hidden" name="item_cart_id" value="<%= item.id %>">
+    <button name="__ajax_frag" value="remove_single_thing" type="submit">Remove</button>
+  </form>
   <% end %>
   <h2>Total</h2>
   <p> Total cart: <%= cart_total %></p>

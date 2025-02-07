@@ -218,7 +218,7 @@ return {
           end
 
           if (not image) then
-            return errcode.field_not_found("No manga image provided")
+            return u.errcode_fmt(errcode.field_not_found, "No manga image provided")
           end
 
           local hash = md5.sumhexa(image.content)
@@ -231,7 +231,7 @@ return {
 
           local file = io.open(path, 'w')
           if (not file) then
-            return errcode.db_create("Failed to open image file")
+            return u.errcode_fmt(errcode.db_create, "Failed to open image file")
           end
 
           file:write(image.content)

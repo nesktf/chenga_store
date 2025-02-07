@@ -8,6 +8,7 @@ local Mangas = Model:extend("mangas", {
     { "cart_items", has_many = "CartItems" },
     { "manga_tags", has_many = "MangaTags" },
     { "sales", has_many = "Sales" },
+    { "user_favs", has_many = "UserFavs" },
   }
 })
 

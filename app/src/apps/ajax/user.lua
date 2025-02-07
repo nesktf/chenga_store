@@ -3,7 +3,30 @@ local u = require("util")
 local Mangas = require("models.mangas")
 local Users = require("models.users")
 local Sales = require("models.sales")
+local SaleCart = require("models.sale_cart")
+local UserCarts = require("models.user_carts")
 local CartItems = require("models.cart_items")
+
+local function populate_cart_garbage(self)
+  local user = u.assert(Users:get(self.session.user.username))
+  local cart = user:get_user_cart()
+
+  local cart_items = cart:get_cart_items()
+
+  self.user = user
+  self.cart = {}
+  local sum = 0
+  for _, item in ipairs(cart_items) do
+    local manga = u.assert(Mangas:get(item.manga_id))
+    sum = sum + (manga.price/100)*item.quantity
+    table.insert(self.cart, {
+      id = item.id,
+      quantity = item.quantity,
+      manga = manga,
+    })
+  end
+  self.cart_total = string.format("$%.2f", sum)
+end
 
 return {
   path = "/ajax/user",
@@ -16,18 +39,24 @@ return {
         local cart = user:get_user_cart()
         local cart_items = cart:get_cart_items()
 
-        local sum = 0
+        local discount = 1
+
+        local sale_cart = u.assert(SaleCart:new{
+          sale_time = os.time(),
+          subtotal = cart.subtotal,
+          discount = discount,
+          total = (cart.subtotal*discount),
+          user_id = self.params.user_id,
+        })
+
         for _, item in ipairs(cart_items) do
           local manga = u.assert(Mangas:get(item.manga_id))
-          sum = sum + (manga.price*item.quantity)
-
           local _ = u.assert(Sales:new {
-            sale_time = os.time(),
-            total = (manga.price*item.quantity),
             quantity = item.quantity,
-            user_id = self.params.user_id,
-            manga_id = manga.id
+            sale_cart_id = sale_cart.id,
+            manga_id = manga.id,
           })
+
           Mangas:modify(manga.id, { stock = manga.stock - item.quantity })
         end
 
@@ -49,12 +78,32 @@ return {
         for _, item in ipairs(cart_items) do
           item:delete()
         end
+        u.assert(UserCarts:modify(cart.id, {
+          subtotal = 0,
+        }))
 
         self.user = user
         self.cart = {}
 
         return self:render("web.user.cart")
-      end
+      end,
+
+      remove_single_thing = function(self)
+        local user = u.assert(Users:get(self.session.user.username))
+        local cart = user:get_user_cart()
+        local cart_item = u.assert(CartItems:get(self.params.item_cart_id))
+        local manga = u.assert(Mangas:get(cart_item.manga_id))
+
+        u.assert(UserCarts:modify(cart.id, {
+          subtotal = cart.subtotal - (manga.price*cart_item.quantity)
+        }))
+
+        cart_item:delete()
+        self.user = user
+        populate_cart_garbage(self)
+
+        return self:render("web.user.cart")
+      end,
     })
 
     page:match("manga", "/manga", page.action{
@@ -62,6 +111,10 @@ return {
         local user = u.assert(Users:get(self.session.user.username))
         local cart = user:get_user_cart()
         local manga = u.assert(Mangas:get(self.params.manga_id))
+
+        u.assert(UserCarts:modify(cart.id, {
+          subtotal = cart.subtotal + (manga.price*self.params.quantity),
+        }))
 
         u.assert(CartItems:new {
           quantity = self.params.quantity,

@@ -11,7 +11,8 @@ local UserCarts = require("models.user_carts")
 local Users = Model:extend("users", {
   relations = {
     { "user_cart", has_one = "UserCarts" },
-    { "sales", has_many = "Sales" }
+    { "sale_cart", has_many = "SaleCart" },
+    { "user_favs", has_many = "UserFavs" }
   }
 })
 

@@ -19,7 +19,8 @@ local function retrieve_stats(_)
     stats.sales_count = sales
   end
 
-  local moni = Sales:get_total()
+  -- local moni = Sales:get_total()
+  local moni = 0
   if (moni == 0) then
     stats.sales_total = "0 :("
   else

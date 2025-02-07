@@ -16,6 +16,7 @@ local function populate_cart_garbage(self)
     local manga = u.assert(Mangas:get(item.manga_id))
     sum = sum + (manga.price/100)*item.quantity
     table.insert(self.cart, {
+      id = item.id,
       quantity = item.quantity,
       manga = manga,
     })
@@ -111,20 +112,17 @@ return {
       end,
     })
     page:match("cart", "/cart", page.action{
-      GET = function(self)
+      before = function(self)
         if (not self.session.user) then
           return self:redirect_to("web.user.login")
         end
-
+      end,
+      GET = function(self)
         self.page_title = self:getstr("cart")
         populate_cart_garbage(self)
         return self:render("web.user.cart")
       end,
       POST = function(self)
-        if (not self.session.user) then
-          return self:redirect_to("web.user.login")
-        end
-
         self.page_title = self:getstr("cart")
         populate_cart_garbage(self)
         return self:render("web.user.cart")

@@ -5,13 +5,13 @@ local errcode = error.errcode
 
 local Sales = Model:extend("sales", {
   relations = {
-    { "user", belongs_to = "Users" },
+    { "sale_cart", belongs_to = "SaleCart" },
     { "manga", belongs_to = "Mangas" }
   }
 })
 
 Sales.validate = error.make_validator {
-  sale_time = types.number,
+  -- sale_time = types.number,
   -- sale_time = types.custom(function(val)
   --   if (val == nil) then
   --     return nil, "Sale time can't be null"
@@ -21,8 +21,9 @@ Sales.validate = error.make_validator {
   --
   --   return true
   -- end),
-  total = types.number,
-  user_id = types.db_id,
+  -- total = types.number,
+  quantity = types.number,
+  sale_cart_id = types.db_id,
   manga_id = types.db_id,
 }
 
@@ -82,7 +83,7 @@ function Sales:delete(id)
 end
 
 function Sales:get_all()
-  return self:select("order by sale_time desc")
+  return self:select("order by sale_cart_id desc")
 end
 
 function Sales:get_total()

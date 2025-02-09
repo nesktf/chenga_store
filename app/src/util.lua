@@ -33,6 +33,11 @@ _M.throw = lapis_util.yield_error
 _M.catch = lapis_util.capture_errors
 _M.catch_json = lapis_util.capture_errors_json
 _M.respond_to = lapis_util.respond_to
+_M.json_params = lapis_util.json_params
+
+function _M.catch_parse_json(fun)
+  return _M.catch_json(_M.json_params(fun))
+end
 
 function _M.err_fmt(msg, ...)
   return {
@@ -52,6 +57,30 @@ function _M.errcode_fmt(status, msg, ...)
     status = status,
     what = string.format(msg, ...)
   }
+end
+
+function _M.make_action(args)
+  local function action_err()
+    _M.throw(_M.errcode_fmt(_M.errcode.not_allowed, "Not allowed"))
+  end
+
+  local _base_action = {
+    GET = action_err,
+    POST = action_err,
+    PUT = action_err,
+    DELETE = action_err,
+  }
+  _base_action.__index = _base_action
+
+  local err_handler = args.on_error or function(self)
+    return { json = self.errors[1] }
+  end
+
+  if (args.parse_json) then
+    return _M.catch(_M.json_params(_M.respond_to(setmetatable(args, _base_action))), err_handler)
+  else
+    return _M.catch(_M.respond_to(setmetatable(args, _base_action)), err_handler)
+  end
 end
 
 function _M.make_validator(record)

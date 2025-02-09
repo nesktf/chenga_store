@@ -114,6 +114,8 @@ function Users:delete(username)
   end
 
   user:get_user_cart():delete()
+  user:get_user_favs():delete()
+  user:get_sale_cart():delete()
   -- for _, item in ipairs(user:get_cart_items()) do
   --   item:delete()
   -- end

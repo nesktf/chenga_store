@@ -25,5 +25,6 @@ end
 
 app:include("apps.ajax")
 app:include("apps.web")
+app:include("apps.api")
 
 return app

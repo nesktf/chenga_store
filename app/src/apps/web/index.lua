@@ -2,6 +2,8 @@ local u = require("util")
 local errcode = u.errcode
 
 local Mangas = require("models.mangas")
+local UserFavs = require("models.user_favs")
+local Users = require("models.users")
 
 return {
   -- path = "/",
@@ -21,6 +23,14 @@ return {
         end
 
         self.manga = Mangas:get(self.params.id)
+        self.mark_fav = false
+        if (self.session.user) then
+          local user = u.assert(Users:get(self.session.user.username))
+          local ufav = UserFavs:find_favorite(user.id, self.params.id)
+          if (ufav) then
+            self.mark_fav = true
+          end
+        end
 
         return self:render("web.manga")
       end,

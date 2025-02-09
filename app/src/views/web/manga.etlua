@@ -49,6 +49,11 @@
       <% else %>
       <button disabled>No stock available!</button>
       <% end %>
+      <% if (session.user) then %>
+      <button class="<%= mark_fav and 'contrast' or '' %>" id="fav_button">Favorite</button>
+      <% else %>
+      <a role="button" href="<%= url_for('web.user.login') %>">Favorite</a>
+      <% end %>
     </div>
   </div>
 
@@ -56,3 +61,42 @@
     <p>:DDDD</p>
   </footer>
 </article>
+
+<template id="templ_test">
+  {{#data}}
+  <p> {{coso}} </p>
+  {{/data}}
+</template>
+
+<% if (session.user) then %>
+<script>
+const fav_button = document.getElementById('fav_button');
+fav_button.addEventListener('click', async () => {
+  const is_fav = fav_button.classList.contains('contrast');
+  const args = {
+    username:"<%= session.user.username %>",
+    manga_id: <%= manga.id %>
+  };
+  const response = await fetch("<%= url_for('api.user.favorites') %>", {
+    method: 'PUT',
+    body: JSON.stringify(args),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  if (!response.ok) {
+    console.log("Req failed")
+    return;
+  }
+  const res = await response.json()
+  console.log(res)
+  if (res["status"] != 0) {
+    console.log("Error: "+res["what"])
+    return
+  }
+  if (is_fav) {
+    fav_button.classList.remove('contrast')
+  } else {
+    fav_button.classList.add('contrast')
+  }
+})
+<% end %>
+</script>

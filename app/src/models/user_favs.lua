@@ -70,4 +70,19 @@ function UserFavs:get_all()
   return self:select("order by user_id desc")
 end
 
+function UserFavs:drop_user(user_id)
+  local favs, err = self:select("where user_id = ?", user_id)
+  if (not favs) then
+    return nil, u.errcode_fmt(errcode.db_update, "Failed to delete favorites: %s", err)
+  end
+  for _,fav in pairs(favs) do
+    fav:delete()
+  end
+  return true
+end
+
+function UserFavs:find_favorite(user_id, manga_id)
+  return self:find{user_id = user_id, manga_id = manga_id}
+end
+
 return UserFavs

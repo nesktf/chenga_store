@@ -119,14 +119,14 @@ return {
       end,
       GET = function(self)
         self.page_title = self:getstr("cart")
-        populate_cart_garbage(self)
+        -- populate_cart_garbage(self)
         return self:render("web.user.cart")
       end,
-      POST = function(self)
-        self.page_title = self:getstr("cart")
-        populate_cart_garbage(self)
-        return self:render("web.user.cart")
-      end,
+      -- POST = function(self)
+      --   self.page_title = self:getstr("cart")
+      --   populate_cart_garbage(self)
+      --   return self:render("web.user.cart")
+      -- end,
     })
     page:match("checkout", "/checkout", page.action{
       GET = function(self)

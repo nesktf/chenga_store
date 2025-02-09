@@ -13,45 +13,121 @@
     <h3>cart</h3>
   </header>
 
-  <% if (#cart > 0) then %>
-  <% for _, item in ipairs(cart) do %>
-  <form hx-post="<%= url_for('ajax.user.cart') %>"
-    hx-target="#cart_content"
-    hx-swap="outerHTML">
-    <h4><%= item.manga.name %></h4>
-    <div class="grid">
-      <p>Price: <%= string.format("$%.2f", item.manga.price/100) %></p>
-      <p>Quantity: <%= item.quantity %></p>
-      <p>Total item: <%= string.format("$%.2f", item.quantity*(item.manga.price/100)) %></p>
-    </div>
-    <input type="hidden" name="item_cart_id" value="<%= item.id %>">
-    <button name="__ajax_frag" value="remove_single_thing" type="submit">Remove</button>
-  </form>
-  <% end %>
-  <h2>Total</h2>
-  <p> Total cart: <%= cart_total %></p>
-
-  <form hx-post="<%= url_for('ajax.user.cart') %>"
-    hx-target="#cart_content"
-    hx-swap="innerHTML">
-
-    <input type="hidden" name="user_id" value="<%= user.id %>">
-    <button name="__ajax_frag" value="buy_thing" type="submit">Buy things</button>
-  </form>
-
-  <form hx-post="<%= url_for('ajax.user.cart') %>"
-    hx-target="#cart_content"
-    hx-swap="outerHTML">
-
-    <input type="hidden" name="user_id" value="<%= user.id %>">
-    <button name="__ajax_frag" value="remove_things" type="submit">Clear</button>
-  <% else %>
-    <% if (buy_message) then %>
-  <p> Payment successful! </p>
-    <% else %>
-  <p> No items in cart!</p>
-    <% end %>
-  <% end %>
+  <div id="cart_items"></div>
+  <footer>
+    <p>:DDDDD</p>
+  </footer>
 
 </article>
 </div>
+
+<template id="cart_item_template">
+  {{#items}}
+  <div class="grid">
+    <img src={{image}} class="manga_image", alt="{{name}}">
+    <h4>{{name}}</h4>
+    <div>
+      <p>Price: {{price}}</p>
+      <p>Quantity: {{quantity}}</p>
+      <p>Total item: {{total_item}}</p>
+    </div>
+    <button onClick="remove_element({{item_id}})">Remove</button>
+  </div>
+  {{/items}}
+  <div class="grid">
+    <p>Total: {{total}}</p>
+    <button onClick="remove_element(-1)">Clear</button>
+    <button onClick="buy_things()">Buy</button>
+  </div>
+</template>
+
+<script>
+const populate_cart = async () => {
+  const cart_items = document.getElementById('cart_items');
+  const response = await fetch(
+    "<%= url_for('api.user.cart') %>?username=<%=session.user.username%>",
+  {
+    method: "GET",
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    console.log("Req failed");
+    return;
+  }
+  const res = await response.json();
+  console.log(res);
+  if (res["status"] != 0) {
+    console.log(res["what"]);
+    return;
+  }
+
+  var render;
+  if (res["content"]["items"].length > 0) {
+    render = Mustache.render(
+      document.getElementById('cart_item_template').innerHTML, res["content"]
+    );
+  } else {
+    render = "No items!!!";
+  }
+
+  cart_items.innerHTML = render;
+};
+
+const remove_element = async (id) => {
+  console.log(id);
+
+  var args;
+  if (id == -1) {
+    args = {
+      username: "<%= session.user.username %>",
+      drop: true,
+    }
+  } else {
+    args = {
+      username: "<%= session.user.username %>",
+      item_id: id,
+    }
+  }
+
+  const response = await fetch("<%= url_for('api.user.cart') %>", {
+    method: "DELETE",
+    body: JSON.stringify(args),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  if (!response.ok) {
+    console.log("Delete failed");
+    return;
+  }
+  const res = await response.json();
+  if (res["status"] != 0) {
+    console.log(res["what"]);
+    return;
+  }
+  populate_cart();
+};
+
+const buy_things = async () => {
+  const args = {
+    username: "<%= session.user.username %>",
+  }
+
+  const response = await fetch("<%= url_for('api.user.checkout') %>", {
+    method: "POST",
+    body: JSON.stringify(args),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  if (!response.ok) {
+    console.log("Buy failed");
+    return;
+  }
+  const res = await response.json();
+  if (res["status"] != 0) {
+    console.log(res["what"]);
+    return;
+  }
+  alert("chagracia")
+  populate_cart();
+};
+
+addEventListener("load", (event) => { populate_cart(); });
+</script>

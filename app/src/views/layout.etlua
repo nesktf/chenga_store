@@ -15,7 +15,9 @@
 <body>
   <header>
     <nav>
-      <img src="/static/logo_light.png" class="logo" alt="logo"> 
+      <a class="logo" href="<%= url_for('web.index') %>">
+        <img src="/static/logo_light.png" alt="logo">
+      </a>
       <ul>
         <li>
         <form role="search" action="<%= url_for('web.search') %>" method="get">
@@ -36,7 +38,9 @@
             <% if (session.user.is_admin) then %>
             <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
             <% end %>
+            <li><a href="<%= url_for('web.user.favorites') %>">favorites</a></li>
             <li><a href="<%= url_for('web.user.cart') %>">cart</a></li>
+            <li><a href="<%= url_for('web.user.purchases') %>">purchases</a></li>
             <li><a href="<%= url_for('web.user.login', nil, { logout = true }) %>">logout</a></li>
           </ul>
           </details>

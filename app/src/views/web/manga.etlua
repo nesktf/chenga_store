@@ -98,5 +98,5 @@ fav_button.addEventListener('click', async () => {
     fav_button.classList.add('contrast')
   }
 })
-<% end %>
 </script>
+<% end %>

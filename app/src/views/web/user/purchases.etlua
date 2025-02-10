@@ -1,0 +1,96 @@
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>purchases</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+  <header>
+    <h3>Purchases</h3>
+  </header>
+
+  <div id="pur_items"></div>
+
+  <footer>
+    <p>:DDD</p>
+  </footer>
+</article>
+
+<template id="item_template">
+  {{#purchases}}
+  <h3>{{sale_time}}</h3>
+  <div class="grid">
+    <div>
+    {{#items}}
+      <div class="grid">
+        <a href={{url}}>
+          <img src={{image}} class="manga_image", alt="{{name}}">
+        </a>
+        <div>
+          <h4>{{name}}</h4>
+          <p>Price: {{price}}</p>
+          <p>Quantity: {{quantity}}</p>
+          <p>Total item: {{total_item}}</p>
+        </div>
+      </div>
+    {{/items}}
+    </div>
+    <div>
+      <p>Items: {{items.length}}</p>
+      <p>Subtotal: {{subtotal}}</p>
+      <p>Discount: {{discount}}</p>
+      <p>Total: {{total}}</p>
+    </div>
+  </div>
+  <hr>
+  {{/purchases}}
+</template>
+
+<script>
+const username = "<%= session.user.username %>";
+const api_url = "<%= url_for('api.user.purchases') %>";
+
+const parse_time = (unix_stamp) => {
+  const stamp = new Date(unix_stamp*1000);
+  const date = stamp.toLocaleDateString("en-GB");
+  const time = stamp.toLocaleTimeString("en-GB");
+  return `${date} - ${time}`;
+};
+
+const populate_items = async () => {
+  const fill_template = (content) => {
+    const pur_items = document.getElementById('pur_items');
+    const template = document.getElementById('item_template');
+    console.log(content);
+    if (content["purchases"].length == 0) {
+      pur_items.innerHTML = "No items!";
+    } else {
+      pur_items.innerHTML = Mustache.render(template.innerHTML, content);
+    }
+  };
+
+  await fetch(`${api_url}?username=${username}`, {
+    method: "GET",
+    headers: { 'Content-Type': 'application/json' },
+  })
+  .then(async (res) => { return await res.json(); })
+  .then((json) => {
+    if (json["status"] != 0) {
+      throw Error(json["what"]);
+    }
+    return json["content"];
+  })
+  .then((content) => {
+    for (let purchase of content["purchases"]) {
+      purchase["sale_time"] = parse_time(purchase["sale_time"]);
+    }
+    fill_template(content);
+  })
+  .catch((err) => { console.log(err) });
+};
+
+addEventListener("load", (event) => { populate_items(); })
+</script>

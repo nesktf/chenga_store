@@ -137,6 +137,24 @@ return {
         return self:render("web.user.checkout")
       end,
     })
+    page:match("purchases", "/purchases", page.action{
+      GET = function(self)
+        if (not self.session.user) then
+          return self:redirect_to("web.user.login")
+        end
+
+        return self:render("web.user.purchases")
+      end
+    })
+    page:match("favorites", "/favorites", page.action{
+      GET = function(self)
+        if (not self.session.user) then
+          return self:redirect_to("web.user.login")
+        end
+
+        return self:render("web.user.favorites")
+      end
+    })
     return page
   end,
 }

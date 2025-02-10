@@ -1,0 +1,101 @@
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li>favorites</li>
+    </ul>
+  </nav>
+</article>
+
+<article>
+  <header>
+    <h3>Favorites</h3>
+  </header>
+
+  <div id="fav_items"></div>
+
+  <footer>
+    <p>:DDD</p>
+  </footer>
+</article>
+
+<template id="fav_item_template">
+  {{#items}}
+  <div class="grid">
+    <a href={{url}}>
+      <img src={{image}} class="manga_image", alt="{{name}}">
+    </a>
+    <div>
+      <h4>{{name}}</h4>
+      <p>Price: {{price}}</p>
+    </div>
+    <button onClick="remove_item({{id}})">Remove</button>
+  </div>
+  {{/items}}
+  <div class="grid">
+    <button onClick="remove_item(-1)">Clear</button>
+  </div>
+</template>
+
+<script>
+const username = "<%= session.user.username %>";
+const api_url = "<%= url_for('api.user.favorites') %>";
+
+const populate_items = async () => {
+  const fill_template = (content) => {
+    const fav_items = document.getElementById('fav_items');
+    const template = document.getElementById('fav_item_template');
+    console.log(content);
+    if (content["items"].length == 0) {
+      fav_items.innerHTML = "No items!"
+    } else {
+      fav_items.innerHTML = Mustache.render(template.innerHTML, content);
+    }
+  };
+
+  await fetch(`${api_url}?username=${username}`, {
+    method: "GET",
+    headers: { 'Content-Type': 'application/json' },
+  })
+  .then(async (res) => { return await res.json(); })
+  .then((json) => { 
+    if (json["status"] != 0) { 
+      throw Error(json["what"]);
+    }
+    fill_template(json["content"]);
+  })
+  .catch((err) => { console.log(err) });
+};
+
+const remove_item = (id) => {
+  const do_request = async (args) => {
+    await fetch(`${api_url}`, {
+      method: "DELETE",
+      body: JSON.stringify(args),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(async (res) => { return await res.json(); })
+    .then((json) => {
+      if (json["status"] != 0) {
+        throw Error(json["what"]);
+      }
+      populate_items();
+    })
+    .catch((err) => { console.log(err) });
+  };
+
+  if (id == -1) {
+    do_request({
+      username: username,
+      drop: true,
+    })
+  } else {
+    do_request({
+      username: username,
+      manga_id: id,
+    })
+  }
+};
+
+addEventListener("load", (event) => { populate_items(); })
+</script>

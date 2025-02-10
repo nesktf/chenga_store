@@ -1,4 +1,5 @@
 local u = require("util")
+local cjson = require("cjson")
 
 local Users = require("models.users")
 local UserFavs = require("models.user_favs")
@@ -7,6 +8,10 @@ local CartItems = require("models.cart_items")
 local SaleCart = require("models.sale_cart")
 local Sales = require("models.sales")
 local Mangas = require("models.mangas")
+
+local function price_fmt(price)
+  return string.format("$%.2f", price*0.01)
+end
 
 return {
   path = "/api/user",
@@ -24,14 +29,17 @@ return {
         for _,fav in pairs(user:get_user_favs()) do
           local manga = u.assert(Mangas:get(fav.manga_id))
           table.insert(out, {
+            id = manga.id,
             name = manga.name,
-            image = manga.image_path,
-            price = manga.price*0.01,
+            image = manga.image_path:sub(2),
+            price = price_fmt(manga.price),
             url = self:url_for('web.manga', { id = manga.id })
           })
         end
 
-        return self:render_json(out)
+        return self:render_json({
+          items = #out == 0 and cjson.empty_array or out,
+        })
       end,
       POST = function(self)
         u.assert(self.params.manga_id, u.errcode_fmt(u.errcode.field_invalid, "No manga provided"))
@@ -55,15 +63,16 @@ return {
         local ufav = UserFavs:find_favorite(user.id, self.params.manga_id)
         if (not ufav) then
           u.throw(u.errcode_fmt(u.errcode.field_not_found, "Favorite not found"))
+        else
+          ufav:delete()
         end
-        ufav:delete()
 
         return self:render_json("ok")
       end,
       PUT = function(self)
         u.assert(self.params.manga_id, u.errcode_fmt(u.errcode.field_invalid, "No manga provided"))
         local user = u.assert(Users:get(self.session.user.username))
-        local ufav = UserFavs:find_favorite(user.id, self.params.id)
+        local ufav = UserFavs:find_favorite(user.id, self.params.manga_id)
         if (not ufav) then
           u.assert(UserFavs:new{user_id = user.id, manga_id = self.params.manga_id})
         else
@@ -100,7 +109,7 @@ return {
         end
 
         return self:render_json({
-          items = out,
+          items = #out == 0 and cjson.empty_array or out,
           total = string.format("$%.2f", sum*0.01),
         })
       end,
@@ -187,12 +196,13 @@ return {
         for _, item in ipairs(cart_items) do
           u.assert(CartItems:delete(item.id))
         end
+        UserCarts:modify(cart.id, { subtotal = 0 })
 
         return self:render_json("ok")
       end,
     })
 
-    page:match("sales", "/sales", page.make_action{
+    page:match("purchases", "/purchases", page.make_action{
       parse_json = true,
       before = function(self)
         u.assert(self.params.username, u.errcode_fmt(u.errcode.field_invalid, "No user provided"))
@@ -205,10 +215,14 @@ return {
         for _, cart in pairs(user:get_sale_cart()) do
           local items = {}
           for _, sale in pairs(cart:get_sales()) do
-            -- local manga = u.assert(Mangas:get(sale.manga_id))
+            local manga = u.assert(Mangas:get(sale.manga_id))
             table.insert(items, {
+              name = manga.name,
+              image = manga.image_path:sub(2),
+              price = price_fmt(manga.price),
               quantity = sale.quantity,
-              manga_id = sale.manga_id,
+              total_item = string.format("$%.2f", manga.price*sale.quantity*0.01),
+              url = self:url_for('web.manga', { id = manga.id })
             })
           end
           table.insert(out, {
@@ -223,7 +237,7 @@ return {
 
         return self:render_json({
           total = string.format("$%.2f", sum*0.01),
-          sales = out,
+          purchases = #out == 0 and cjson.empty_array or out,
         })
       end,
     })

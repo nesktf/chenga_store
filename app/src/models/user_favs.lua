@@ -82,7 +82,8 @@ function UserFavs:drop_user(user_id)
 end
 
 function UserFavs:find_favorite(user_id, manga_id)
-  return self:find{user_id = user_id, manga_id = manga_id}
+  local q = self:select("where user_id = ? and manga_id = ? limit 1", user_id, manga_id)
+  return #q > 0 and q[1] or nil
 end
 
 return UserFavs

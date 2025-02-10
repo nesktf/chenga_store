@@ -1,7 +1,63 @@
 <article>
-  <h2>Content!</h2>
-  <p> The index goes here!!!</p>
-<footer>
-<p> this is a footer!!! </p>
-</footer>
+  <header>
+    <h2>Home page</h2>
+  </header>
+
+  <div id="manga_items" class="manga-grid"></div>
 </article>
+
+<template id="item_template">
+  {{#items}}
+    <div class ="thumbnail-card">
+      <a href={{url}}>
+      <article>
+        <header>
+          <h5><p>{{name}}</p></h5>
+        </header>
+        <img src={{image}} class="manga_image", alt="{{name}}">
+        <footer>
+          <p>{{price}} - Stock: {{stock}}</p>
+        </footer>
+      </article>
+      </a>
+    </div>
+  {{/items}}
+</template>
+
+<script>
+const api_url = "<%= url_for('api.manga.index') %>";
+
+const populate_items = async () => {
+  const fill_template = (content) => {
+    const manga_items = document.getElementById('manga_items');
+    const template = document.getElementById('item_template');
+    console.log(content);
+    if (content["items"].length == 0) {
+      manga_items.innerHTML = "<p>No items!!!</p>";
+    } else {
+      manga_items.innerHTML = Mustache.render(template.innerHTML, content);
+    }
+  };
+  await fetch(`${api_url}/?order=rand&limit=10&page=1`, {
+    method: "GET",
+    headers: { 'Content-Type': 'application/json' },
+  })
+  .then(async (res) => { return await res.json(); })
+  .then((json) => {
+    if (json["status"] != 0) {
+      throw Error(json["what"]);
+    }
+    return json["content"];
+  })
+  .then((content) => {
+    content["items"] = content["items"].filter((item) => {
+      return item.stock > 0;
+    })
+    return content;
+  })
+  .then((content) => { fill_template(content); })
+  .catch((err) => { console.log(err) });
+};
+
+addEventListener("load", (event) => { populate_items(); })
+</script>

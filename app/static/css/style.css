@@ -1,4 +1,168 @@
 .logo {
-  width: 22.5%;
+  width: 15rem;
   height: auto;
+}
+
+.manga-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: min-content 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: stretch;
+  min-width: 1vw;
+}
+
+@media screen and (max-width: 1700px) {
+.manga-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: min-content 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: stretch;
+  min-width: 1vw;
+}
+}
+
+@media screen and (max-width: 1200px) {
+  .manga-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: min-content 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    justify-items: stretch;
+    align-items: stretch;
+    min-width: 1vw;
+  }
+}
+
+.thumbnail-card {
+  width: 20rem;
+}
+
+
+@keyframes card-grow {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05)
+  }
+}
+
+@keyframes card-shrink {
+  0% {
+    transform: scale(1.05)
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.thumbnail-card:hover {
+  animation: card-grow 0.3s ease-in-out;
+  transform: scale(1.05);
+}
+
+.thumbnail-card:not(:hover) {
+  animation: card-shrink 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.thumbnail-card img {
+  display: block;
+  position: relative;
+  width: auto;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 10px 10px 10px 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .manga-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    justify-items: stretch;
+    align-items: stretch;
+    min-width: 1vw;
+  }
+
+  .thumbnail-card {
+    min-width: 0px;
+    width: 100%;
+  }
+
+  .thumbnail-card img {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px 10px 10px 10px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.thumbnail-card a {
+  text-decoration: none;
+}
+
+.thumbnail-card header {
+  height: 50px;
+}
+
+.thumbnail-card footer p {
+  text-align: center;
+}
+
+.thumbnail-card:hover article {
+  background-color: #F0F0F0;
+}
+
+.thumbnail-card h5 {
+  height: 50px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.thumbnail-card h5 p {
+  display: inline-block;
+  position: relative;
+  width: fit-content;
+  white-space: nowrap;
+  line-height: 50px;
+  animation: none;
+}
+
+@keyframes card-title-scroll {
+  0% {
+    transform: translateX(0); left: 0%;
+  }
+  35% {
+    transform: translateX(-100%); left: 100%;
+  }
+  45% {
+    transform: translateX(-100%); left: 100%;
+  }
+  80% {
+    transform: translateX(0); left: 0%;
+  }
+}
+
+.thumbnail-card:hover h5 p {
+  animation: card-title-scroll 15s linear infinite;
 }

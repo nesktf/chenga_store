@@ -101,16 +101,16 @@ return {
             item_id = item.id,
             name = manga.name,
             image = manga.image_path:sub(2),
-            price = string.format("$%.2f",manga.price*0.01),
+            price = price_fmt(manga.price),
             quantity = item.quantity,
-            total_item = string.format("$%.2f", manga.price*item.quantity*0.01),
+            total_item = price_fmt(manga.price*item.quantity),
             url = self:url_for('web.manga', { id = manga.id })
           })
         end
 
         return self:render_json({
           items = #out == 0 and cjson.empty_array or out,
-          total = string.format("$%.2f", sum*0.01),
+          total = price_fmt(sum),
         })
       end,
       POST = function(self)
@@ -221,14 +221,14 @@ return {
               image = manga.image_path:sub(2),
               price = price_fmt(manga.price),
               quantity = sale.quantity,
-              total_item = string.format("$%.2f", manga.price*sale.quantity*0.01),
+              total_item = price_fmt(manga.price*sale.quantity),
               url = self:url_for('web.manga', { id = manga.id })
             })
           end
           table.insert(out, {
             sale_time = cart.sale_time,
-            total = string.format("$%.2f", cart.total*0.01),
-            subtotal = string.format("$%.2f", cart.subtotal*0.01),
+            total = price_fmt(cart.total),
+            subtotal = price_fmt(cart.subtotal),
             discount = string.format("%.2f%%", (1-cart.discount)*0.01),
             items = items,
           })
@@ -236,7 +236,7 @@ return {
         end
 
         return self:render_json({
-          total = string.format("$%.2f", sum*0.01),
+          total = price_fmt(sum),
           purchases = #out == 0 and cjson.empty_array or out,
         })
       end,

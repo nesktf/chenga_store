@@ -1,9 +1,13 @@
-<article>
-  <header>
-    <h4><%= manga.name %></h4>
-  </header>
-  <img src="<%= manga.image_path %>" class="manga_image" alt="<%= manga.name %>">
-  <p>Price: <%= string.format("$%.2f", manga.price / 100) %></p>
-  <p>Stock: <%= manga.stock  %></p>
-  <a role="button" href="<%= url_for('web.manga', { id=manga.id }) %>">Details</a>
-</article>
+<div class="thumbnail-card">
+  <a href="<%= url_for('web.manga', { id=manga.id }) %>">
+    <article>
+      <header>
+        <h5><p><%= manga.name %></p></h5>
+      </header>
+        <img src="<%= manga.image_path %>" class="manga_image" alt="<%= manga.name %>">
+      <footer>
+        <p><%= string.format("$%.2f", manga.price*0.01) %> - Stock: <%= manga.stock %></p>
+      </footer>
+    </article>
+  </a>
+</div>

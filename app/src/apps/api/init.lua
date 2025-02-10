@@ -38,6 +38,7 @@ app:before_filter(function(self)
 end)
 
 app:include(make_page("apps.api.user"))
+app:include(make_page("apps.api.manga"))
 -- app:include(make_page("apps.api.admin"))
 
 return app

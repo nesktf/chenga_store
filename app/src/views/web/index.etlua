@@ -38,7 +38,7 @@ const populate_items = async () => {
       manga_items.innerHTML = Mustache.render(template.innerHTML, content);
     }
   };
-  await fetch(`${api_url}/?order=rand&limit=10&page=1`, {
+  await fetch(`${api_url}/?order=rand&limit=12&page=1`, {
     method: "GET",
     headers: { 'Content-Type': 'application/json' },
   })

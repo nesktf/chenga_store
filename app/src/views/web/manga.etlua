@@ -51,9 +51,6 @@
     </div>
   </div>
 
-  <footer>
-    <p>:DDDD</p>
-  </footer>
 </article>
 
 <% if (session.user) then %>

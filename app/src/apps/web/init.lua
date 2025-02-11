@@ -48,6 +48,10 @@ app:before_filter(function(self)
   self.static_url = "/static/%s"
   self.files_url = "/files/%s/%s"
 
+  function self:set_title(text)
+    self.page_title = string.format("%s - %s", self.page_title, text)
+  end
+
   function self:format_url(pattern, ...)
     self:build_url(string.format(pattern, ...))
   end

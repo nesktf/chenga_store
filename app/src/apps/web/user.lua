@@ -79,6 +79,7 @@ return {
         return { render = "web.user.login" }
       end,
       GET = function(self)
+        self:set_title("Login")
         if (self.params.logout) then
           self.session.user = nil
           return self:redirect_to("web.index")
@@ -91,6 +92,7 @@ return {
         return self:render("web.user.login")
       end,
       POST = function(self)
+        self:set_title("Login")
         if (self.params.logout) then
           self.session.user = nil
           return self:redirect_to("web.index")
@@ -118,7 +120,7 @@ return {
         end
       end,
       GET = function(self)
-        self.page_title = self:getstr("cart")
+        self:set_title("Cart")
         -- populate_cart_garbage(self)
         return self:render("web.user.cart")
       end,
@@ -139,6 +141,7 @@ return {
     })
     page:match("purchases", "/purchases", page.action{
       GET = function(self)
+        self:set_title("Purchases")
         if (not self.session.user) then
           return self:redirect_to("web.user.login")
         end
@@ -148,6 +151,7 @@ return {
     })
     page:match("favorites", "/favorites", page.action{
       GET = function(self)
+        self:set_title("Favorites")
         if (not self.session.user) then
           return self:redirect_to("web.user.login")
         end

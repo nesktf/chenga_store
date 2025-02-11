@@ -13,6 +13,7 @@ return {
   setup = function(page)
     page:match("index", "/", page.action{
       GET = function(self)
+        self:set_title("Home")
         return self:render("web.index")
       end
     })
@@ -24,6 +25,7 @@ return {
         end
 
         self.manga = Mangas:get(self.params.id)
+        self:set_title(self.manga.name)
         self.mark_fav = false
         if (self.session.user) then
           local user = u.assert(Users:get(self.session.user.username))
@@ -48,7 +50,7 @@ return {
 
     page:match("search", "/search", page.action{
       GET = function(self)
-        self.page_title = self:getstr("search")
+        self:set_title("Search")
 
         local mangas = Mangas:select([[
           where lower(name) like lower('%' || ? || '%') order by name asc limit ? offset ?

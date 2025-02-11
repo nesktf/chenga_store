@@ -57,5 +57,8 @@
   <% content_for('inner') %>
   </main>
 
+  <footer style="text-align: right; margin-right: 20px;">
+    <a href="https://github.com/nesktf/chenga_store">Source code</a>
+  </footer>
 </body>
 </html>

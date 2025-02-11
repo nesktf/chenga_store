@@ -131,6 +131,9 @@ return {
           local q = item.quantity+self.params.quantity
           u.assert(q <= manga.stock, u.errcode_fmt(u.errcode.field_invalid, "Not enough stock!"))
           CartItems:modify(item.id, { quantity = q })
+          u.assert(UserCarts:modify(cart.id, {
+            subtotal = cart.subtotal + (manga.price*self.params.quantity),
+          }))
           return self:render_json({
             left = manga.stock-q
           })

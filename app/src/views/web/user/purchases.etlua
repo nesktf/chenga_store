@@ -13,39 +13,46 @@
   </header>
 
   <div id="pur_items"></div>
-
-  <footer>
-    <p>:DDD</p>
-  </footer>
 </article>
 
 <template id="item_template">
   {{#purchases}}
-  <h3>{{sale_time}}</h3>
-  <div class="grid">
-    <div>
-    {{#items}}
-      <div class="grid">
-        <a href={{url}}>
-          <img src={{image}} class="manga_image", alt="{{name}}">
-        </a>
-        <div>
-          <h4>{{name}}</h4>
-          <p>Price: {{price}}</p>
-          <p>Quantity: {{quantity}}</p>
-          <p>Total item: {{total_item}}</p>
-        </div>
-      </div>
-    {{/items}}
-    </div>
-    <div>
+  <article>
+    <header>
+      <h3>{{sale_time}}</h3>
+    </header>
+    <div class="grid">
       <p>Items: {{items.length}}</p>
       <p>Subtotal: {{subtotal}}</p>
       <p>Discount: {{discount}}</p>
       <p>Total: {{total}}</p>
     </div>
-  </div>
-  <hr>
+    <div>
+    <hr>
+    {{#items}}
+      <div class="manga-row">
+        <a href={{url}}>
+          <img src={{image}} class="manga-row-image", alt="{{name}}">
+        </a>
+        <div>
+          <article>
+            <header>
+              <a href={{url}}>
+                <h4>{{name}}</h4>
+              </a>
+            </header>
+            <div>
+              <p>Price: {{price}}</p>
+              <p>Quantity: {{quantity}}</p>
+              <p>Total item: {{total_item}}</p>
+            </div>
+          </article>
+        </div>
+      </div>
+      <hr>
+    {{/items}}
+    </div>
+  </article>
   {{/purchases}}
 </template>
 

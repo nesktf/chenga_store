@@ -195,6 +195,38 @@
   align-items: start;
 }
 
+.manga-row {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: center;
+}
+
+.manga-row-image {
+  display: block;
+  width: 20rem;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px 10px 10px 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.manga-row-inner {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: center;
+  align-items: center;
+}
+
+.manga-row a {
+  text-decoration: none;
+}
+
 .cart-button {
   height: inherit;
 }

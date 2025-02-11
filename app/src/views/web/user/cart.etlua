@@ -10,125 +10,193 @@
 
 <article>
   <header>
-    <h3>cart</h3>
+    <h3>Cart</h3>
   </header>
 
   <div id="cart_items"></div>
-  <footer>
-    <p>:DDDDD</p>
-  </footer>
 
 </article>
 </div>
 
+<dialog id="the_modal">
+  <article>
+    <header id="modal_header"></header>
+    <div id ="modal_content"></div>
+    <footer id="modal_footer"></footer>
+  </article>
+</dialog>
+
+<template id="modal_template">
+  <button role="button" class="secondary" data-target="the_modal" onClick="toggle_modal(event)">
+    Cancel
+  </button>
+  <button autofocus data-target="the_modal" id="modal_confirm" onClick="{{fun}}(event)">
+    Confirm
+  </button>
+</template>
+
+<template id="modal_template2">
+  <button role="button" data-target="the_modal" onClick="toggle_modal(event)">Confirm</button>
+</template>
+
 <template id="cart_item_template">
   {{#items}}
-  <div class="grid">
+  <div class="manga-row">
     <a href={{url}}>
-      <img src={{image}} class="manga_image", alt="{{name}}">
+      <img src={{image}} class="manga-row-image", alt="{{name}}">
     </a>
-    <h4>{{name}}</h4>
     <div>
-      <p>Price: {{price}}</p>
-      <p>Quantity: {{quantity}}</p>
-      <p>Total item: {{total_item}}</p>
+    <article>
+      <header>
+        <a href={{url}}>
+          <h4>{{name}}</h4>
+        </a>
+      </header>
+      <div class="manga-row-inner">
+        <div>
+          <p>Price: {{price}}</p>
+          <p>Quantity: {{quantity}}</p>
+          <p>Total item: {{total_item}}</p>
+        </div>
+        <button onClick="remove_element({{item_id}})">Remove</button>
+      </div>
+    </article>
     </div>
-    <button onClick="remove_element({{item_id}})">Remove</button>
   </div>
+  <hr>
   {{/items}}
   <div class="grid">
-    <p>Total: {{total}}</p>
-    <button onClick="remove_element(-1)">Clear</button>
-    <button onClick="buy_things()">Buy</button>
+    <button data-target="the_modal" onClick="clear_warning(event)">Clear</button>
+    <button data-target="the_modal" onClick="check_cart(event)">Buy</button>
   </div>
 </template>
 
+<script src="/static/js/modal_toggle.js"></script>
 <script>
-const populate_cart = async () => {
-  const cart_items = document.getElementById('cart_items');
-  const response = await fetch(
-    "<%= url_for('api.user.cart') %>?username=<%=session.user.username%>",
-  {
-    method: "GET",
-    headers: { 'Content-Type': 'application/json' },
+var total_cart = "";
+
+const cart_api = "<%= url_for('api.user.cart') %>";
+const username = "<%= session.user.username %>";
+const checkout_api = "<%= url_for('api.user.checkout') %>";
+
+const modal_content = document.getElementById('modal_content');
+const modal_header = document.getElementById('modal_header');
+const modal_footer = document.getElementById('modal_footer');
+
+const clear_warning = (event) => {
+  const template = document.getElementById('modal_template');
+  modal_header.innerHTML = "<h4>Clear cart</h4>";
+  modal_content.innerHTML = "<p>Do you want to clear the cart?</p>";
+  modal_footer.innerHTML = Mustache.render(template.innerHTML, {
+    fun: "clear_cart",
   });
-  if (!response.ok) {
-    console.log("Req failed");
-    return;
-  }
-  const res = await response.json();
-  console.log(res);
-  if (res["status"] != 0) {
-    console.log(res["what"]);
-    return;
-  }
-
-  var render;
-  if (res["content"]["items"].length > 0) {
-    render = Mustache.render(
-      document.getElementById('cart_item_template').innerHTML, res["content"]
-    );
-  } else {
-    render = "No items!!!";
-  }
-
-  cart_items.innerHTML = render;
+  toggle_modal(event);
+};
+const clear_cart = (event) => {
+  remove_element(-1);
+  toggle_modal(event);
 };
 
-const remove_element = async (id) => {
+const check_cart = (event) => {
+  const template = document.getElementById('modal_template');
+  modal_header.innerHTML = "<h4>Confirm payment</h4>";
+  modal_content.innerHTML = `<p>Total: ${total_cart}</p>`;
+  modal_footer.innerHTML = Mustache.render(template.innerHTML, {
+    fun: "buy_things",
+  });
+  toggle_modal(event);
+}
+
+const populate_cart = async () => {
+  await fetch(`${cart_api}?username=${username}`, {
+    method: "GET",
+    headers: { 'Content-Type': 'application/json' },
+  })
+  .then(async (res) => { return await res.json(); })
+  .then((json) => {
+    if (json["status"] != 0) {
+      throw Error(json["what"]);
+    }
+    console.log(json);
+    return json["content"];
+  })
+  .then((content) => {
+    const cart_items = document.getElementById('cart_items');
+    var render;
+    if (content["items"].length > 0) {
+      render = Mustache.render(
+        document.getElementById('cart_item_template').innerHTML, content
+      );
+      total_cart = content["total"];
+    } else {
+      render = "No items!!!";
+    }
+    cart_items.innerHTML = render;
+  })
+  .catch((err) => { console.log(err) })
+};
+
+const remove_element = (id) => {
+  const do_thing = async (args) => {
+    await fetch(cart_api, {
+      method: "DELETE",
+      body: JSON.stringify(args),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(async (res) => { return await res.json(); })
+    .then((json) => {
+      if (json["status"] != 0) {
+        throw Error(json["what"]);
+      }
+      return json["content"];
+    })
+    .then((content) => { populate_cart(); })
+    .catch((err) => { console.log(err) });
+  };
   console.log(id);
 
   var args;
   if (id == -1) {
-    args = {
-      username: "<%= session.user.username %>",
+    do_thing({
+      username: username,
       drop: true,
-    }
+    });
   } else {
-    args = {
-      username: "<%= session.user.username %>",
+    do_thing({
+      username: username,
       item_id: id,
-    }
+    });
   }
-
-  const response = await fetch("<%= url_for('api.user.cart') %>", {
-    method: "DELETE",
-    body: JSON.stringify(args),
-    headers: { 'Content-Type': 'application/json' },
-  })
-  if (!response.ok) {
-    console.log("Delete failed");
-    return;
-  }
-  const res = await response.json();
-  if (res["status"] != 0) {
-    console.log(res["what"]);
-    return;
-  }
-  populate_cart();
 };
 
-const buy_things = async () => {
-  const args = {
-    username: "<%= session.user.username %>",
-  }
-
-  const response = await fetch("<%= url_for('api.user.checkout') %>", {
+const buy_things = async (ev) => {
+  await fetch(checkout_api, {
     method: "POST",
-    body: JSON.stringify(args),
+    body: JSON.stringify({
+      username: username,
+    }),
     headers: { 'Content-Type': 'application/json' },
   })
-  if (!response.ok) {
-    console.log("Buy failed");
-    return;
-  }
-  const res = await response.json();
-  if (res["status"] != 0) {
-    console.log(res["what"]);
-    return;
-  }
-  alert("chagracia")
-  populate_cart();
+  .then(async (res) => { return await res.json(); })
+  .then((json) => {
+    if (json["status"] != 0) {
+      throw Error(json["what"]);
+    }
+    return json["content"];
+  })
+  .then((content) => {
+    const modal_confirm = document.getElementById('modal_confirm');
+    setTimeout(() => {
+      const template = document.getElementById('modal_template2');
+      modal_header.innerHTML = "<h4>Payment result</h4>";
+      modal_content.innerHTML = `<p>Payment successful!</p>`;
+      modal_footer.innerHTML = template.innerHTML;
+      
+      populate_cart();
+    }, 1000);
+    modal_confirm.setAttribute("aria-busy", true);
+  })
+  .catch((err) => { console.log(err) });
 };
 
 addEventListener("load", (event) => { populate_cart(); });

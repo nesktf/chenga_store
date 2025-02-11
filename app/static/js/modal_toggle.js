@@ -38,11 +38,11 @@ const close_modal = (modal) => {
   }, anim_duration);
 }
 
-const toggle_modal = (id) => {
+const toggle_modal = (event) => {
   event.preventDefault();
-  const modal = document.getElementById(id);
-  if (!id) {
-    console.log("Invalid modal", id);
+  const modal = document.getElementById(event.currentTarget.dataset.target);
+  console.log(event);
+  if (!modal) {
     return;
   }
   modal && (modal.open ? close_modal(modal) : open_modal(modal));

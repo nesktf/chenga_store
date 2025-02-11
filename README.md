@@ -56,6 +56,8 @@ The website runs on port 8080 by default.
 ## Images
 ### Home page
 ![chenga_home](img/chenga_home.png)
+### Details page
+![chenga_mofuark](img/chenga_mofuark.png)
 ### Dashboard
 ![chenga_admin](img/chenga_admin.png) 
 

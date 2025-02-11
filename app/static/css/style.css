@@ -166,3 +166,35 @@
 .thumbnail-card:hover h5 p {
   animation: card-title-scroll 15s linear infinite;
 }
+
+.manga-image {
+  display: block;
+  width: 25rem;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px 10px 10px 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.manga-title {
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: start;
+}
+
+.manga-view {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: start;
+}
+
+.cart-button {
+  height: inherit;
+}

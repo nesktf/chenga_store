@@ -4,6 +4,7 @@ local errcode = u.errcode
 local Mangas = require("models.mangas")
 local UserFavs = require("models.user_favs")
 local Users = require("models.users")
+local CartItems = require("models.cart_items")
 
 return {
   -- path = "/",
@@ -26,9 +27,18 @@ return {
         self.mark_fav = false
         if (self.session.user) then
           local user = u.assert(Users:get(self.session.user.username))
+          local cart = user:get_user_cart()
           local ufav = UserFavs:find_favorite(user.id, self.params.id)
           if (ufav) then
             self.mark_fav = true
+          end
+
+          local item = CartItems:find({
+            user_cart_id = cart.id,
+            manga_id = self.manga.id,
+          })
+          if (item) then
+            self.manga.stock = self.manga.stock - item.quantity
           end
         end
 

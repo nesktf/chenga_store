@@ -121,6 +121,20 @@ return {
         local manga = u.assert(Mangas:get(self.params.manga_id))
         local cart = user:get_user_cart()
 
+        local item = CartItems:find({
+          user_cart_id = cart.id,
+          manga_id = manga.id,
+        })
+
+        if (item) then
+          local q = item.quantity+self.params.quantity
+          u.assert(q <= manga.stock, u.errcode_fmt(u.errcode.field_invalid, "Not enough stock!"))
+          CartItems:modify(item.id, { quantity = q })
+          return self:render_json({
+            left = manga.stock-q
+          })
+        end
+
         u.assert(CartItems:new {
           quantity = self.params.quantity,
           manga_id = manga.id,
@@ -131,7 +145,9 @@ return {
           subtotal = cart.subtotal + (manga.price*self.params.quantity),
         }))
 
-        return self:render_json("ok")
+        return self:render_json({
+          left = manga.stock - self.params.quantity,
+        })
       end,
       DELETE = function(self)
         local user = u.assert(Users:get(self.params.username))

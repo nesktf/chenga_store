@@ -10,50 +10,44 @@
 
 <article>
   <header>
-    <h3> Manga </h3>
+    <h3>Buy manga</h3>
   </header>
-  <div class="grid">
-    <img src="<%= manga.image_path:sub(2) %>" alt="<%= manga.name %>">
+  <div class="manga-view">
     <div>
+      <img src="<%= manga.image_path:sub(2) %>" alt="<%= manga.name %>" class="manga-image">
+    </div>
+    <div>
+      <div class="manga-title">
       <h3><%= manga.name %></h3>
-      <p>Author: <%= manga.author %></p>
-      <% if (manga.isbn ~= "") then %>
-      <p>ISBN: <%= manga.isbn %></p>
-      <% end %>
-      <p>Price: <%= string.format("$%.2f", manga.price/100) %></p>
-
-
-      <div id="purchase_status"></div>
-
-      <% if (manga.stock > 0) then %>
-<!--        <form action="<%= url_for('web.user.cart') %>" method="post">
-          <input name="manga_id" type="hidden" value="<%= manga.id %>">
-          <div role="group">
-
-            <p>Available: <%= manga.stock %></p>
-          </div>
-          <button type="submit">Buy</button>
-        </form> -->
-        <form hx-post="<%= url_for('ajax.user.manga') %>"
-          hx-target="#purchase_status"
-          hx-swap"innerHTML">
-            <input type="number"
-              name="quantity"
-              value="1"
-              placeholder="Quantity" 
-              min="1" max="<%= manga.stock %>">
-          <button type="submit">Add to cart</button>
-          <input name="__ajax_frag" value="add_fragment" type="hidden">
-          <input name="manga_id" type="hidden" value="<%= manga.id %>">
-        </form>
-      <% else %>
-      <button disabled>No stock available!</button>
-      <% end %>
       <% if (session.user) then %>
-      <button class="<%= mark_fav and 'contrast' or '' %>" id="fav_button">Favorite</button>
+          <button class="<%= mark_fav and 'contrast' or '' %>" id="fav_button">Favorite</button>
       <% else %>
       <a role="button" href="<%= url_for('web.user.login') %>">Favorite</a>
       <% end %>
+      </div>
+      <p>Author: <%= manga.author %></p>
+      <p>ISBN: <%= manga.isbn ~= "" and manga.isbn or "N/A" %></p>
+      <p>Price: <%= string.format("$%.2f", manga.price/100) %></p>
+      <p id="manga_stock">Stock: <%= manga.stock %></p> 
+
+      <div id="manga_buttons">
+      <% if (manga.stock > 0) then %>
+          <fieldset role="group">
+            <input type="number"
+              id="manga_quantity"
+              value="1"
+              min="1" max="<%= manga.stock %>">
+            <% if (session.user) then %>
+              <button id="buy_button" class="cart-button">Buy</button>
+            <% else %>
+              <a role="button" href="<%= url_for('web.user.login') %>">Buy</a>
+            <% end %>
+          </fieldset>
+      <% else %>
+        <button disabled>No stock available!</button>
+      <% end %>
+      </div>
+      <p id="manga_notify"></p>
     </div>
   </div>
 
@@ -62,41 +56,110 @@
   </footer>
 </article>
 
-<template id="templ_test">
-  {{#data}}
-  <p> {{coso}} </p>
-  {{/data}}
-</template>
-
 <% if (session.user) then %>
 <script>
+const username = "<%= session.user.username %>";
+const manga_id = <%= manga.id %>;
+
+const buy_button = document.getElementById('buy_button');
 const fav_button = document.getElementById('fav_button');
+const manga_notify = document.getElementById('manga_notify');
+const manga_buttons = document.getElementById('manga_buttons');
+const manga_quantity = document.getElementById('manga_quantity');
+const manga_stock = document.getElementById('manga_stock');
+
+const cart_api = "<%= url_for('api.user.cart') %>";
+const fav_api = "<%= url_for('api.user.favorites') %>";
+
+if (buy_button != null) {
+  buy_button.addEventListener('click', async () => {
+    buy_button.setAttribute("aria-busy", true);
+    buy_button.innerHTML = "";
+
+    await fetch(cart_api, {
+      method: "POST",
+      body: JSON.stringify({
+        username: username,
+        manga_id: manga_id,
+        quantity: manga_quantity.value,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(async (res) => { return await res.json(); })
+    .then((json) => {
+      if (json["status"] != 0) {
+        throw Error(json["what"]);
+      }
+      console.log(json);
+      return json["content"];
+    })
+    .then((content) => {
+      setTimeout(() => {
+        manga_notify.innerHTML = "Items added to cart!";
+        if (content["left"] == 0) {
+          manga_buttons.innerHTML = "<button disabled>No stock available!</button>"
+        } else {
+          buy_button.setAttribute('aria-busy', false);
+          buy_button.innerHTML = "Buy";
+          manga_quantity.max = content["left"];
+        }
+        manga_stock.innerHTML = `Stock: ${content["left"]}`;
+        manga_quantity.value = 1;
+        setTimeout(() => {
+          manga_notify.innerHTML = "";
+        }, 2000);
+      }, 1000);
+    })
+    .catch((err) => {
+      manga_notify.innerHTML = `Error: ${err}`;
+      buy_button.setAttribute('aria-busy', false);
+      buy_button.innerHTML = "Buy";
+    });
+  });
+}
+
 fav_button.addEventListener('click', async () => {
   const is_fav = fav_button.classList.contains('contrast');
-  const args = {
-    username:"<%= session.user.username %>",
-    manga_id: <%= manga.id %>
-  };
-  const response = await fetch("<%= url_for('api.user.favorites') %>", {
+  fav_button.setAttribute("aria-busy", true);
+  fav_button.innerHTML = "";
+
+  await fetch(fav_api, {
     method: 'PUT',
-    body: JSON.stringify(args),
+    body: JSON.stringify({
+      username: username,
+      manga_id: manga_id,
+    }),
     headers: { 'Content-Type': 'application/json' },
   })
-  if (!response.ok) {
-    console.log("Req failed")
-    return;
-  }
-  const res = await response.json()
-  console.log(res)
-  if (res["status"] != 0) {
-    console.log("Error: "+res["what"])
-    return
-  }
-  if (is_fav) {
-    fav_button.classList.remove('contrast')
-  } else {
-    fav_button.classList.add('contrast')
-  }
+  .then(async (res) => { return await res.json(); })
+  .then((json) => {
+    if (json["status"] != 0) {
+      throw Error(json["what"]);
+    }
+    console.log(json);
+    return json["content"];
+  })
+  .then((content) => {
+    setTimeout(() => {
+      fav_button.setAttribute("aria-busy", false);
+      fav_button.innerHTML = "Favorite";
+      if (is_fav) {
+        fav_button.classList.remove('contrast')
+        manga_notify.innerHTML = "Favorite removed!";
+      } else {
+        fav_button.classList.add('contrast')
+        manga_notify.innerHTML = "Favorite added!";
+      }
+      setTimeout(() => {
+        manga_notify.innerHTML = "";
+      }, 1000);
+    }, 300);
+  })
+  .catch((err) => {
+    manga_notify.innerHTML = `Error: ${err}`;
+    fav_button.setAttribute("aria-busy", false);
+    fav_button.innerHTML = "Favorite";
+  });
 })
 </script>
 <% end %>

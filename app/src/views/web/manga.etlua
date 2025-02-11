@@ -108,7 +108,7 @@ if (buy_button != null) {
         setTimeout(() => {
           manga_notify.innerHTML = "";
         }, 2000);
-      }, 1000);
+      }, 500);
     })
     .catch((err) => {
       manga_notify.innerHTML = `Error: ${err}`;

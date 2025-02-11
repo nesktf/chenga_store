@@ -33,6 +33,7 @@ return {
             name = manga.name,
             image = manga.image_path:sub(2),
             price = price_fmt(manga.price),
+            stock = manga.stock,
             url = self:url_for('web.manga', { id = manga.id })
           })
         end

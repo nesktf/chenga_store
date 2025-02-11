@@ -13,30 +13,58 @@
   </header>
 
   <div id="fav_items"></div>
-
-  <footer>
-    <p>:DDD</p>
-  </footer>
 </article>
+
+<dialog id="the_modal">
+  <article>
+    <header>
+      <h4>Clear favorites</h4>
+    </header>
+
+    <p>Do you want to clear your favorites?</p>
+
+    <footer>
+      <button role="button" class="secondary" data-target="the_modal" onClick="toggle_modal(event)">
+        Cancel
+      </button>
+      <button autofocus data-target="the_modal" id="modal_confirm" onClick="clear_items(event)">
+        Confirm
+      </button>
+    </footer>
+  </article>
+</dialog>
 
 <template id="fav_item_template">
   {{#items}}
-  <div class="grid">
+  <div class="manga-row">
     <a href={{url}}>
-      <img src={{image}} class="manga_image", alt="{{name}}">
+      <img src={{image}} class="manga-row-image", alt="{{name}}">
     </a>
     <div>
-      <h4>{{name}}</h4>
-      <p>Price: {{price}}</p>
+      <article>
+        <header>
+          <a href={{url}}>
+            <h4>{{name}}</h4>
+          </a>
+        </header>
+        <div class="manga-row-inner">
+          <div>
+            <p>Stock: {{stock}}</p>
+            <p>Price: {{price}}</p>
+          </div>
+          <button onClick="remove_item({{id}})">Remove</button>
+        </div>
+      </article>
     </div>
-    <button onClick="remove_item({{id}})">Remove</button>
   </div>
+  <hr>
   {{/items}}
   <div class="grid">
-    <button onClick="remove_item(-1)">Clear</button>
+    <button data-target="the_modal" onClick="toggle_modal(event)">Clear</button>
   </div>
 </template>
 
+<script src="/static/js/modal_toggle.js"></script>
 <script>
 const username = "<%= session.user.username %>";
 const api_url = "<%= url_for('api.user.favorites') %>";
@@ -66,6 +94,11 @@ const populate_items = async () => {
   })
   .catch((err) => { console.log(err) });
 };
+
+const clear_items = (event) => {
+  remove_item(-1);
+  toggle_modal(event);
+}
 
 const remove_item = (id) => {
   const do_request = async (args) => {

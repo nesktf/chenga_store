@@ -2,7 +2,7 @@ local secret = assert(loadfile("../data/secret.lua"))()
 local config = require("lapis.config")
 
 -- Lua libraries
-local lua_path = "./src/?.lua;./src/?/init.lua"
+local lua_path = "./src/?.lua;./src/?/init.lua;./src/?/?.lua"
 local lua_cpath = ""
 
 -- Max file size

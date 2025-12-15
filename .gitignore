@@ -4,3 +4,5 @@ app/*_temp/
 data/secret.lua
 app/static/image*
 todo.md
+nginx.conf.compiled
+logs/*

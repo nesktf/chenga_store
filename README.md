@@ -17,35 +17,29 @@ Simple manga e-commerce I made for a college project. Writen in Lua, using
 and [picocss](https://github.com/picocss/pico).
 
 ## Installing
-Only tested on Debian 12 Bookworm, should work fine in other distros.
-May or may not run on Windows.
+Tested on Debian 12 Bookworm and Arch Linux, but it should work fine on other distros.
 
-Install PostgreSQL, Luarocks and Lua5.1/LuaJIT using your system package manager, then download
-the luarocks dependencies.
+First you need to install openresty, LuaJIT and luarocks. Follow the installation instructions from
+[openresty's installation page](https://openresty.org/en/installation.html) or install it from
+your package manager if it's available.
+
+You need to install the following dependencies from luarocks:
 ```sh
-sudo apt install postgresql postgresql-contrib luarocks liblua5.1-dev libluajit-5.1-dev
 luarocks install lapis lua-cjson bcrpyt tableshape bit lpeg --local --lua-version=5.1
 ```
 
-Additionaly, you have to install openresty. Follow the installation instructions in
-[openresty's installation page](https://openresty.org/en/installation.html).
+For the database you have two options, either run PostgreSQL locally and create the user
+and database specified in `config.lua`, or just use docker with the provided `docker-compose.yml`
 
-## Settings
-You can modify the project settings in `app/config.lua`.
-
-By default, PostgreSQL should be running in port 5432, have an `ecommerce` database and set
-the password as `password` for user `postgres`. The queries in `sql_init.sql` can be used to create the database.
-
-You also need to add a `data/secret.lua` file, it should return a string to be
-used as a secret token.
+Lastly, you have to define a secret in the `data/secret.lua` file. It just has to return
+a string that will be used as a secret token, like the following:
 ```lua
 -- data/secret.lua
 return "myfunnysecrethehehaha"
 ```
 
 ## Running
-Go inside the `app/` folder and run one of the following commands (don't forget to load your
-luarocks environment):
+Run one of the following commands (don't forget to load your luarocks environment):
 ```sh
 lapis server development # to run in dev mode
 lapis server production # to run in production mode

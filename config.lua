@@ -1,4 +1,4 @@
-local secret = assert(loadfile("../data/secret.lua"))()
+local secret = assert(loadfile("./data/secret.lua"))()
 local config = require("lapis.config")
 
 -- Lua libraries
@@ -10,9 +10,10 @@ local body_size = "15m"
 
 local postgres = {
   host = "127.0.0.1",
-  user = "postgres",
+  port = "5460",
+  user = "chenga",
   password = "password",
-  database = "ecommerce",
+  database = "chenga_ecommerce",
 }
 
 local site_name = "CHENGA"

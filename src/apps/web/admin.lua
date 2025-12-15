@@ -1,6 +1,7 @@
 local Users = require("models.users")
 local Mangas = require("models.mangas")
 local Sales = require("models.sales")
+local SaleCart = require("models.sale_cart")
 local Tags = require("models.tags")
 
 local function retrieve_stats(_)
@@ -19,8 +20,7 @@ local function retrieve_stats(_)
     stats.sales_count = sales
   end
 
-  -- local moni = Sales:get_total()
-  local moni = 0
+  local moni = SaleCart:get_total()
   if (moni == 0) then
     stats.sales_total = "0 :("
   else

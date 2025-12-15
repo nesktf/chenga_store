@@ -341,7 +341,7 @@ return {
         self.req_type = "users"
         local content = {}
         for _, user in ipairs(users) do
-          local sales = user:get_sales()
+          local sales = user:get_sale_carts()
 
           local sales_total = 0
           for _, sale in ipairs(sales) do
@@ -385,7 +385,8 @@ return {
 
           local sales_total = 0
           for _, sale in ipairs(sales) do
-            sales_total = sales_total + sale.total
+            local sale_cart = sale:get_sale_cart()
+            sales_total = sales_total + sale_cart.total
           end
           table.insert(content, {
             manga.name,

@@ -75,4 +75,12 @@ function SaleCart:get_all()
   return self:select("order by sale_time desc")
 end
 
+function SaleCart:get_total()
+  local sum = 0
+  for _, sale in ipairs(self:get_all()) do
+    sum = sum + sale.total
+  end
+  return sum
+end
+
 return SaleCart

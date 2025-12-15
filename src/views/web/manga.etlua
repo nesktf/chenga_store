@@ -14,7 +14,7 @@
   </header>
   <div class="manga-view">
     <div>
-      <img src="<%= manga.image_path:sub(2) %>" alt="<%= manga.name %>" class="manga-image">
+      <img src="<%= manga.image_path %>" alt="<%= manga.name %>" class="manga-image">
     </div>
     <div>
       <div class="manga-title">

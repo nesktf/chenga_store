@@ -31,7 +31,7 @@ return {
           table.insert(out, {
             id = manga.id,
             name = manga.name,
-            image = manga.image_path:sub(2),
+            image = manga.image_path,
             price = price_fmt(manga.price),
             stock = manga.stock,
             url = self:url_for('web.manga', { id = manga.id })
@@ -101,7 +101,7 @@ return {
           table.insert(out, {
             item_id = item.id,
             name = manga.name,
-            image = manga.image_path:sub(2),
+            image = manga.image_path,
             price = price_fmt(manga.price),
             quantity = item.quantity,
             total_item = price_fmt(manga.price*item.quantity),
@@ -238,7 +238,7 @@ return {
             local manga = u.assert(Mangas:get(sale.manga_id))
             table.insert(items, {
               name = manga.name,
-              image = manga.image_path:sub(2),
+              image = manga.image_path,
               price = price_fmt(manga.price),
               quantity = sale.quantity,
               total_item = price_fmt(manga.price*sale.quantity),

@@ -4,3 +4,4 @@ nginx.conf.compiled
 data/secret.lua
 static/image*
 todo.md
+data/reports/

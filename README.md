@@ -2,11 +2,11 @@
     <picture>
         <source
             media="(prefers-color-scheme: dark)"
-            srcset="app/static/logo_dark.png" />
+            srcset="static/logo_dark.png" />
         <source
             media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
-            srcset="app/static/logo_light.png" />
-        <img alt="chenga" src="app/static/logo_light.png" />
+            srcset="static/logo_light.png" />
+        <img alt="chenga" src="static/logo_light.png" />
     </picture>
 </div>
 

@@ -1,6 +1,6 @@
 logs/
 nginx.conf.compiled
 *_temp/
-secret.lua
+data/secret.lua
 static/image*
 todo.md

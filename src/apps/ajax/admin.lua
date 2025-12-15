@@ -224,7 +224,7 @@ return {
           local hash = md5.sumhexa(image.content)
           local ext = image.filename:match("^.+(%..+)$")
 
-          local path = string.format("./static/image/%s%s", hash, ext)
+          local path = string.format("./data/image/%s%s", hash, ext)
           if (file_exists(path)) then
             return path -- Reuse image if hash matches
           end
@@ -237,7 +237,7 @@ return {
           file:write(image.content)
           file:close()
 
-          return path
+          return path:gsub("./data/", "")
         end)(self.params.manga_image))
 
         local params = {
@@ -360,7 +360,7 @@ return {
         end)
         self.content = content
         local path = u.assert(table2csv(
-          string.format("./static/reports/chenga_report_client_%d.csv",
+          string.format("./data/reports/chenga_report_client_%d.csv",
           os.time()),
           {
             header = { "Name", "Username", "TotalSales", "TotalMoney" },
@@ -368,7 +368,7 @@ return {
             sep = ","
           }
         ))
-        self.download_path = path
+        self.download_path = path:gsub("./data/", "/")
 
         return self:render("ajax.admin.stats")
       end,
@@ -400,7 +400,7 @@ return {
         self.content = content
 
         local path = u.assert(table2csv(
-          string.format("./static/reports/chenga_report_prod_%d.csv",
+          string.format("./data/reports/chenga_report_prod_%d.csv",
           os.time()),
           {
             header = { "Name", "TotalSales", "TotalMoney" },
@@ -408,7 +408,7 @@ return {
             sep = ","
           }
         ))
-        self.download_path = path
+        self.download_path = path:gsub("./data/", "/")
 
         return self:render("ajax.admin.stats")
       end,

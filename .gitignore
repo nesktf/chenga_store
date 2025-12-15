@@ -1,8 +1,6 @@
-app/logs/
-app/nginx.conf.compiled
-app/*_temp/
-data/secret.lua
-app/static/image*
-todo.md
+logs/
 nginx.conf.compiled
-logs/*
+*_temp/
+secret.lua
+static/image*
+todo.md

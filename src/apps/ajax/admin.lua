@@ -237,7 +237,7 @@ return {
           file:write(image.content)
           file:close()
 
-          return path:gsub("./data/", "")
+          return path:gsub("./data", "")
         end)(self.params.manga_image))
 
         local params = {
@@ -321,7 +321,7 @@ return {
           for _,field in ipairs(manga) do
             table.insert(out, {
               form_id = field.id,
-              content = { field.name, field.isbn == "" and "N/A" or field.isbn, field.stock, 
+              content = { field.name, (field.isbn == "" or field.isbn == nil) and "N/A" or field.isbn, field.stock, 
                 string.format("$%.2f", field.price/100) }
             })
           end

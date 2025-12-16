@@ -7,43 +7,6 @@
   </nav>
 </article>
 
-<article id="content">
-  <header>
-    <h3>Stats</h3>
-  </header>
-
-  <fieldset class="grid">
-    <section>
-      <h2> Users </h2>
-      <p> User count: <%= stats.user_count %> </p>
-      <p> Admin count: <%= stats.admin_count %> </p>
-    </section>
-
-    <section>
-      <h2> Products </h2>
-      <p> Product count: <%= stats.prod_count %> </p>
-      <p> Tag count: <%= stats.tag_count %> </p>
-    </section>
-
-    <section>
-      <h2> Sales </h2>
-      <p> Sales count: <%= stats.sales_count %> </p>
-      <p> Sales total: <%= stats.sales_total %> </p>
-    </section>
-  </fieldset>
-
-  <div id="report_thing"></div>
-
-  <form hx-post="<%= url_for('ajax.admin.stats') %>"
-    hx-target="#report_thing"
-    hx-swap="innerHTML">
-    <fieldset class="grid">
-      <button name="__ajax_frag" value="client_report", type="submit">Client report</button>
-      <button name="__ajax_frag" value="product_report", type="submit">Product report</button>
-    </fieldset>
-  </form>
-</article>
-
 <article>
   <header>
     <h3>Manage things</h3>
@@ -55,4 +18,107 @@
   </fieldset>
 </article>
 
+<article id="manga_report">
+  <header>
+  <h3>Manga stats</h3>
+  </header>
+
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <div style="width: 1000px;">
+      <canvas id="manga_graph0"></canvas>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <div style="width: 1000px;">
+      <canvas id="manga_graph1"></canvas>
+    </div>
+  </div>
+
+  </div>
+  <table id="manga_table">
+    <tr>
+      <th><b>Name</b></th>
+      <th>Total sales</th>
+      <th>Total</th>
+    </tr>
+  </table>
+
+  <footer>
+    <button onClick="downloadMangas(event)">Download report</button>
+  </footer>
+</article>
+
+<template id="manga_item">
+  <tr>
+    <td>{{name}}</td>
+    <td>{{sales}}</td>
+    <td>{{total}}</td>
+  </tr>
+</template>
+
+<article id="sales_report">
+  <header>
+  <h3>Sales stats</h3>
+  </header>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <div style="width: 800px;">
+      <canvas id="sales_graph"></canvas>
+    </div>
+  </div>
+
+  </div>
+  <table id="sales_table">
+    <tr>
+      <th><b>Name</b></th>
+      <th>Total</th>
+    </tr>
+  </table>
+</article>
+
+<template id="sales_item">
+  <tr>
+    <td>{{name}}</td>
+    <td>{{total}}</td>
+  </tr>
+</template>
+
+<article id="user_report">
+  <header>
+  <h3>User stats</h3>
+  </header>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <div style="width: 800px;">
+      <canvas id="user_graph"></canvas>
+    </div>
+  </div>
+
+  </div>
+  <table id="user_table">
+    <tr>
+      <th><b>Name</b></th>
+      <th>Total sales</th>
+      <th>Total spent</th>
+    </tr>
+  </table>
+
+  <footer>
+    <button onClick="downloadUsers(event)">Download report</button>
+  </footer>
+</article>
+
+<template id="user_item">
+  <tr>
+    <td>{{name}}</td>
+    <td>{{sales}}</td>
+    <td>{{total}}</td>
+  </tr>
+</template>
+
 <script src="/static/js/modal_toggle.js"></script>
+<script src="/static/js/chart/chart.umd.min.js"></script>
+<script>
+const mangas_api = "<%= url_for('api.dashboard.mangas') %>";
+const sales_api  = "<%= url_for('api.dashboard.sales') %>";
+const users_api  = "<%= url_for('api.dashboard.users') %>";
+</script>
+<script src="/static/js/dashboard_main.js"></script>

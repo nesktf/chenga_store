@@ -33,7 +33,7 @@
           <% if (session.user) then %>
           <details class="dropdown">
           <summary><%= session.user.username %></summary>
-          <ul dir="rtl">
+          <ul dir="rtl" style="width: 200px;" >
             <% if (session.user.is_admin) then %>
             <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
             <% end %>

@@ -57,8 +57,8 @@ function Users:new(params)
 
   local cart, cerr = UserCarts:new {
     subtotal = 0,
-    discount = 0,
-    total = 0,
+    -- discount = 0,
+    -- total = 0,
     user_id = user.id
   }
   if (not cart )then

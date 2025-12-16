@@ -32,5 +32,6 @@ ALTER SEQUENCE "users_id_seq" RESTART WITH 3;
 INSERT INTO user_carts (id, subtotal, user_id) VALUES
   (1, 0, 1),
   (2, 0, 2);
+ALTER SEQUENCE "user_carts_id_seq" RESTART WITH 3;
 
 COMMIT;

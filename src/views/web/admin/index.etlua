@@ -43,6 +43,7 @@
     </tr>
   </table>
 
+  <p style="text-align: right;" id="total_manga"></p>
   <footer>
     <button onClick="downloadMangas(event)">Download report</button>
   </footer>

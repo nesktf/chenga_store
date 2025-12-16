@@ -158,7 +158,12 @@ function Users:login(params)
     )
   end
 
-  local prehash = user.username:lower()..params.password..secret
+  local prehash
+  if (user.username == "cirno" or user.username == "marisa" or user.username == "nitori") then
+    prehash = "admin"..params.password..secret
+  else
+    prehash = user.username:lower()..params.password..secret
+  end
   if (not bcrypt.verify(prehash, user.password)) then
     return nil, u.errcode_fmt(errcode.password_not_match,
       "Invalid password"

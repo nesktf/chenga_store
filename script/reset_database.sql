@@ -26,12 +26,16 @@ ALTER SEQUENCE "mangas_id_seq" RESTART WITH 11;
 
 INSERT INTO users (id, name, address, email, username, password, is_admin) VALUES
   (1, 'admin', 'admin''s house', 'admin@admin.com', 'admin', '$2b$12$D3PkAVuo55KYdLms/xHYU.PbFard9Btqe2PXlLWBoIXM3aldtfKxa', true),
-  (2, 'Cirno Baka', 'calle falsa 123', 'cirno@mistylake.com', 'cirno', '$2b$12$D3PkAVuo55KYdLms/xHYU.PbFard9Btqe2PXlLWBoIXM3aldtfKxa', false);
+  (2, 'Cirno Baka', 'Misty Lake 123', 'cirno@gensokyo.com', 'cirno', '$2b$12$D3PkAVuo55KYdLms/xHYU.PbFard9Btqe2PXlLWBoIXM3aldtfKxa', false),
+  (3, 'Kirisame Marisa', 'Forest of Magic 123', 'marisa@gensokyo.com', 'marisa', '$2b$12$D3PkAVuo55KYdLms/xHYU.PbFard9Btqe2PXlLWBoIXM3aldtfKxa', false),
+  (4, 'Kawashiro Nitori', 'Yokai Mountain 123', 'nitori@kappa.com', 'nitori', '$2b$12$D3PkAVuo55KYdLms/xHYU.PbFard9Btqe2PXlLWBoIXM3aldtfKxa', false);
 ALTER SEQUENCE "users_id_seq" RESTART WITH 3;
 
 INSERT INTO user_carts (id, subtotal, user_id) VALUES
   (1, 0, 1),
-  (2, 0, 2);
-ALTER SEQUENCE "user_carts_id_seq" RESTART WITH 3;
+  (2, 0, 2),
+  (3, 0, 3),
+  (4, 0, 4);
+ALTER SEQUENCE "user_carts_id_seq" RESTART WITH 5;
 
 COMMIT;

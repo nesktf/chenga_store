@@ -3,6 +3,7 @@ local cjson = require("cjson")
 local Mangas = require("models.mangas")
 local Users = require("models.users")
 local SaleCart = require("models.sale_cart")
+local Sales = require("models.sales")
 local errcode = u.errcode
 
 local function table2csv(path, params)
@@ -61,16 +62,23 @@ local function fetch_manga_sales(csv_format)
       end
       sales_total = sales_total + total
     end
+
+    local manga_sales = Sales:get_from_manga(manga.id)
+    local sale_count = 0
+    for _, sale in ipairs(manga_sales) do
+      sale_count = sale_count + sale.quantity
+    end
+
     if (csv_format) then
       table.insert(content, {
         manga.name,
-        #sales,
+        sale_count,
         string.format("$%.2f", sales_total/100),
       })
     else
       table.insert(content, {
         name = manga.name,
-        sales = #sales,
+        sales = sale_count,
         total = sales_total / 100,
       })
     end

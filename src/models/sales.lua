@@ -86,6 +86,10 @@ function Sales:get_all()
   return self:select("order by sale_cart_id desc")
 end
 
+function Sales:get_from_manga(manga_id)
+  return self:select("where manga_id = ? order by sale_cart_id desc", manga_id)
+end
+
 function Sales:get_total()
   local sum = 0
   for _, sale in ipairs(self:get_all()) do

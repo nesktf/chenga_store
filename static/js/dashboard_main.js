@@ -84,6 +84,11 @@ async function populateMangas() {
       tbl.appendChild(element);
     });
 
+    const total = json.mangas.reduce((prev, curr) => {
+      return prev + curr.total;
+    }, 0);
+    document.getElementById("total_manga").innerHTML =`Total: ${formatPrice(total)}`;
+
     new Chart(document.getElementById("manga_graph0"), {
       type: 'bar',
       data: {
@@ -157,7 +162,7 @@ async function populateSales() {
       const element = document.createElement("tr");
       element.innerHTML = Mustache.render(templ, {
         name: months[idx],
-        total: formatPrice(manga.total),
+        total: formatPrice(manga.total/100),
       });
       tbl.appendChild(element);
     });
@@ -168,8 +173,8 @@ async function populateSales() {
         labels: months,
         datasets: [
           {
-            label: "Amount of sales",
-            data: json.mangas.map((item) => item.total),
+            label: "Sales income",
+            data: json.mangas.map((item) => item.total/100),
           }
         ],
       },
@@ -181,7 +186,7 @@ async function populateSales() {
           },
           title: {
             display: true,
-            text: "Sales per month",
+            text: "Income per month",
           }
         }
       },
@@ -212,7 +217,7 @@ async function populateUsers() {
         datasets: [
           {
             label: "User sales",
-            data: json.mangas.map((item) => item.sales),
+            data: json.mangas.map((item) => item.total),
           }
         ],
       },

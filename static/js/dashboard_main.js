@@ -66,7 +66,7 @@ async function downloadUsers(ev) {
     console.log(json.path);
     downloadURI(json.path, "chenga_report_users.csv");
   };
-  doQuery(mangas_api, onFetch, {})
+  doQuery(users_api, onFetch, {})
 }
 
 async function populateMangas() {

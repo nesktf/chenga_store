@@ -1,4 +1,3 @@
-local db     = require("lapis.db")
 local schema = require("lapis.db.schema")
 local types = schema.types
 
@@ -21,7 +20,7 @@ return {
       { "isbn", types.text{ null = true } },
       { "stock", types.integer },
       { "price", types.integer },
-      { "discount", types.integer{ null = true } },
+      { "discount", types.integer{default = 0} },
       { "image_path", types.text{ null = true } },
     })
 
@@ -75,6 +74,8 @@ return {
     schema.create_table("sales", {
       { "id", types.serial{ unique = true, primary_key = true } },
       { "quantity", types.integer },
+      { "discount", types.integer { default = 0 } },
+      { "price", types.integer },
 
       { "sale_cart_id", types.foreign_key },
       { "manga_id", types.foreign_key },

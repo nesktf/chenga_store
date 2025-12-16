@@ -23,8 +23,6 @@
     </header>
     <div class="grid">
       <p>Items: {{items.length}}</p>
-      <p>Subtotal: {{subtotal}}</p>
-      <p>Discount: {{discount}}</p>
       <p>Total: {{total}}</p>
     </div>
     <div>
@@ -44,6 +42,8 @@
             <div>
               <p>Price: {{price}}</p>
               <p>Quantity: {{quantity}}</p>
+              <p>Subtotal item: {{subtotal}}</p>
+              <p>Discount: {{discount}}</p>
               <p>Total item: {{total_item}}</p>
             </div>
           </article>

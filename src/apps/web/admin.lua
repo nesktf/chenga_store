@@ -59,6 +59,11 @@ return {
         return self:render("web.admin.users")
       end,
     })
+    page:match("discounts", "/discounts", page.action {
+      GET = function(self)
+        return self:render("web.admin.discounts")
+      end,
+    })
     return page
   end
 }

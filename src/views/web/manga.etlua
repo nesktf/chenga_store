@@ -29,6 +29,9 @@
       <p>ISBN: <%= manga.isbn ~= "" and manga.isbn or "N/A" %></p>
       <p>Price: <%= string.format("$%.2f", manga.price/100) %></p>
       <p id="manga_stock">Stock: <%= manga.stock %></p> 
+      <% if (manga.discount ~= 0) then %>
+      <h5>Discount: <%= string.format("%.2f%%", manga.discount) %></h5>
+      <% end %>
 
       <div id="manga_buttons">
       <% if (manga.stock > 0) then %>

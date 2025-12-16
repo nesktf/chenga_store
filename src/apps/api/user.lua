@@ -12,6 +12,16 @@ local Mangas = require("models.mangas")
 local function price_fmt(price)
   return string.format("$%.2f", price*0.01)
 end
+local function perc_fmt(perc)
+  return string.format("%.2f%%", perc)
+end
+
+
+local calc_total = function(manga, quantity)
+  local disc = manga.discount ~= 0 and manga.discount or 100
+  local subtotal = math.floor(manga.price*quantity*disc/100)
+  return subtotal
+end
 
 return {
   path = "/api/user",
@@ -97,14 +107,21 @@ return {
         local sum = 0
         for _,item in pairs(cart:get_cart_items()) do
           local manga = u.assert(Mangas:get(item.manga_id))
-          sum = sum + manga.price*item.quantity
+          local subtotal = manga.price*item.quantity
+          local total = subtotal
+          if (manga.discount ~= 0) then
+            total = total*(100-manga.discount)/100
+          end
+          sum = sum + total
           table.insert(out, {
             item_id = item.id,
             name = manga.name,
             image = manga.image_path,
             price = price_fmt(manga.price),
             quantity = item.quantity,
-            total_item = price_fmt(manga.price*item.quantity),
+            discount = perc_fmt(manga.discount),
+            subtotal = price_fmt(subtotal),
+            total_item = price_fmt(total),
             url = self:url_for('web.manga', { id = manga.id })
           })
         end
@@ -131,8 +148,10 @@ return {
           local q = item.quantity+self.params.quantity
           u.assert(q <= manga.stock, u.errcode_fmt(u.errcode.field_invalid, "Not enough stock!"))
           CartItems:modify(item.id, { quantity = q })
+
+          local subtotal = calc_total(manga, q)
           u.assert(UserCarts:modify(cart.id, {
-            subtotal = cart.subtotal + (manga.price*self.params.quantity),
+            subtotal = cart.subtotal + subtotal,
           }))
           return self:render_json({
             left = manga.stock-q
@@ -145,8 +164,9 @@ return {
           user_cart_id = cart.id,
         })
 
+        local subtotal = calc_total(manga, self.params.quantity)
         u.assert(UserCarts:modify(cart.id, {
-          subtotal = cart.subtotal + (manga.price*self.params.quantity),
+          subtotal = cart.subtotal + subtotal,
         }))
 
         return self:render_json({
@@ -173,9 +193,10 @@ return {
         local manga = u.assert(Mangas:get(cart_item.manga_id))
         local quant = cart_item.quantity
         cart_item:delete()
+        local subt = calc_total(manga, quant)
 
         u.assert(UserCarts:modify(cart.id, {
-          subtotal = cart.subtotal - (manga.price*quant)
+          subtotal = cart.subtotal - subt
         }))
 
         return self:render_json("ok")
@@ -206,6 +227,8 @@ return {
           local manga = u.assert(Mangas:get(item.manga_id))
           local _ = u.assert(Sales:new {
             quantity = item.quantity,
+            discount = manga.discount,
+            price = manga.price,
             sale_cart_id = sale_cart.id,
             manga_id = manga.id,
           })
@@ -232,16 +255,24 @@ return {
         local out = {}
 
         local sum = 0
-        for _, cart in pairs(user:get_sale_cart()) do
+        for _, cart in pairs(user:get_sale_carts()) do
           local items = {}
           for _, sale in pairs(cart:get_sales()) do
             local manga = u.assert(Mangas:get(sale.manga_id))
+            local subtotal = sale.price*sale.quantity
+            local total = subtotal
+            if (sale.discount ~= 0) then
+              total = total*(100-sale.discount)/100
+            end
+
             table.insert(items, {
               name = manga.name,
               image = manga.image_path,
               price = price_fmt(manga.price),
               quantity = sale.quantity,
-              total_item = price_fmt(manga.price*sale.quantity),
+              subtotal = price_fmt(subtotal),
+              discount = perc_fmt(sale.discount),
+              total_item = price_fmt(total),
               url = self:url_for('web.manga', { id = manga.id })
             })
           end

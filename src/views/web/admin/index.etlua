@@ -51,6 +51,7 @@
   <fieldset class="grid">
     <a href="<%= url_for('web.admin.users') %>" role="button">Users</a>
     <a href="<%= url_for('web.admin.manga') %>" role="button">Products</a>
+    <a href="<%= url_for('web.admin.discounts') %>" role="button">Discounts</a>
   </fieldset>
 </article>
 

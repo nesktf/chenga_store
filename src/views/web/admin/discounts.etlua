@@ -1,0 +1,59 @@
+<script src="/static/js/modal_toggle.js"></script>
+<script>const discountAPI = "<%= url_for('api.discounts.query') %>";</script>
+<script src="/static/js/discounts_main.js"></script>
+
+<article>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= url_for('web.index') %>">home</a></li>
+      <li><a href="<%= url_for('web.admin.index') %>">dashboard</a></li>
+      <li>products</li>
+    </ul>
+  </nav>
+</article>
+
+
+<article>
+  <header>
+    <h3>Product discounts</h3>
+  </header>
+
+  <table id="discount_table">
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Discount</th>
+      <th></th>
+    </tr>
+  </table>
+</article>
+
+<dialog id="the_modal">
+  <article>
+    <header id="modal_header"></header>
+    <div id ="modal_content"></div>
+    <footer id="modal_footer"></footer>
+  </article>
+</dialog>
+
+<template id="modal_template">
+  <button autofocus data-target="the_modal" id="modal_confirm" onClick="toggle_modal(event)">
+    Confirm
+  </button>
+</template>
+
+<template id="discount_table_item">
+  <tr>
+    <td>{{name}}</td>
+    <td>{{price}}</td>
+    <td id="disc_item_{{id}}">
+      <p>{{discount_fmt}}</p>
+      <input hidden type="text" inputmode="numeric" pattern="\d*" value="{{discount}}" />
+    </td>
+    <td>
+      <button data-target="the_modal" onClick="updateItem(this, {{id}}, event)">Modify</button>
+    </td>
+  </tr>
+</template>
+
+<script>discountMain()</script>

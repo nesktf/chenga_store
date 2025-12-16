@@ -40,8 +40,12 @@ const close_modal = (modal) => {
 
 const toggle_modal = (event) => {
   event.preventDefault();
-  const modal = document.getElementById(event.currentTarget.dataset.target);
-  console.log(event);
+  var modal;
+  if (event.target) {
+    modal = document.getElementById(event.target.dataset.target);
+  } else {
+    modal = document.getElementById(event.currentTarget.dataset.target);
+  }
   if (!modal) {
     return;
   }

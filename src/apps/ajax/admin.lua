@@ -385,8 +385,11 @@ return {
 
           local sales_total = 0
           for _, sale in ipairs(sales) do
-            local sale_cart = sale:get_sale_cart()
-            sales_total = sales_total + sale_cart.total
+            local total = sale.price*sale.quantity
+            if (sale.discount ~= 0) then
+              total = total*(100-sale.discount)/100
+            end
+            sales_total = sales_total + total
           end
           table.insert(content, {
             manga.name,

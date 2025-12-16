@@ -56,6 +56,8 @@
         <div>
           <p>Price: {{price}}</p>
           <p>Quantity: {{quantity}}</p>
+          <p>Subtotal: {{subtotal}}</p>
+          <p>Discount: {{discount}}</p>
           <p>Total item: {{total_item}}</p>
         </div>
         <button onClick="remove_element({{item_id}})">Remove</button>
@@ -65,6 +67,9 @@
   </div>
   <hr>
   {{/items}}
+  <p style="text-align: right;">
+    Total: {{total}}
+  </p>
   <div class="grid">
     <button data-target="the_modal" onClick="clear_warning(event)">Clear</button>
     <button data-target="the_modal" onClick="check_cart(event)">Buy</button>
